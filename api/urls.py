@@ -2,13 +2,13 @@
 
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import UsersView, FriendRequestsView
-from rest_framework.authtoken import views
+from .views import UsersView, FriendRequestsView, WithUserIdTokenProviderView, UserDetailView
 
 urlpatterns = {
     path('users/', UsersView.as_view(), name="users"),
+    path('users/<int:pk>/', UserDetailView.as_view(), name="user-detail"),
     path('friends/', FriendRequestsView.as_view(), name="friends"),
-    path('auth/', views.obtain_auth_token, name="auth")
+    path('auth/', WithUserIdTokenProviderView.as_view(), name="auth"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

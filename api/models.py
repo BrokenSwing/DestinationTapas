@@ -38,10 +38,18 @@ class Product(models.Model):
     Ex: shot tray, food trail, single shot
     """
 
+    TYPES = (
+        ("FOOD", "FOOD"),
+        ("COCKTAIL", "COCKTAIL"),
+        ("SHOT", "SHOT"),
+        ("OTHER", "OTHER")
+    )
+
     name = models.CharField(max_length=30)
     price = models.FloatField()
     ingredients = models.ManyToManyField(Ingredient)
     old = models.BooleanField(default=False)
+    product_type = models.CharField(max_length=10, choices=TYPES)
 
     def __str__(self):
         return "{} : {}€ {}".format(self.name, self.price, "(old)" if self.old else "")

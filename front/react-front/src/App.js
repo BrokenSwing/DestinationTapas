@@ -1,32 +1,14 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
 import "aviator";
+import NavBar from "./components/NavBar"
+import Footer from "./components/Footer";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link navigate"
-          href={Aviator.hrefFor('/red')}
-          rel="noopener noreferrer"
-        >
-          Go To Red
-        </a>
-        <a
-          className="App-link navigate"
-          href={Aviator.hrefFor('/green')}
-          rel="noopener noreferrer"
-        >
-          Go To Green
-        </a>
-      </header>
-    </div>
+    <>
+        <NavBar />
+        <Footer />
+    </>
   );
 }
 

@@ -15,8 +15,12 @@ export const requiresAuth = (onAuthFunction) => {
     };
 };
 
+export const renderLater = (component) => {
+  return () => render(component);
+};
+
 export const render = (component) => {
-    ReactDOM.render(component, document.getElementById("root"))
+    return ReactDOM.render(component, document.getElementById("root"));
 };
 
 export const isConnected = () => {
