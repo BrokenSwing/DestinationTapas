@@ -75,7 +75,8 @@ function ShowProducts(products) {
                     {Object.keys(cats).map((cat) => (
                         <ProductsCategory key={cat} name={TYPES_TO_CAT[cat]}>
                             {cats[cat].map((product) => (
-                                <ProductItem key={product.id} name={product.name} ingredients={product.ingredients} />
+                                <ProductItem key={product.id} price={product.price}
+                                             name={product.name} ingredients={product.ingredients} />
                             ))}
                         </ProductsCategory>
                     ))}
