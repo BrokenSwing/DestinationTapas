@@ -7,5 +7,6 @@ urlpatterns = [
     path('', index, name="index"),
     path('red/', index, name="red"),
     path('green/', index, name="green"),
-    path('auth/', index, name="auth")
+    path('auth/', index, name="auth"),
+    path('products/', index, name="products")
 ]

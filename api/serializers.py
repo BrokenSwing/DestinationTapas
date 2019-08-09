@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import FriendRequest
+from .models import FriendRequest, Product
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -25,3 +25,11 @@ class FriendRequestsSerializer(serializers.ModelSerializer):
         model = FriendRequest
         fields = ["sender", "target", "request_date", "status"]
         read_only = ['request_date']
+
+
+class ProductSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Product
+        exclude = []
+        depth = 1

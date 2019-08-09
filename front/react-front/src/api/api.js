@@ -16,6 +16,18 @@ const post = (url, jsonBody, additionalHeaders={}) => {
     });
 };
 
+const get = (url, additionalHeaders={}) => {
+    return fetch(url, {
+        method: "GET",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': cookies.get("csrftoken"),
+            ...additionalHeaders,
+        },
+    });
+};
+
 const postWithToken = (url, jsonBody, additionalHeaders={}) => {
   return post(url, jsonBody, {
      "Authorization": `Token ${cookies.get("auth_token")}`,
@@ -65,6 +77,22 @@ export const fetchUserData = async (userId) => {
             ...jsonBody,
         }
     } else {
+        return {
+            ok: false,
+        };
+    }
+};
+
+export const fetchAllProducts = async () => {
+    const result = await get(endpoints.ALL_PRODUCTS);
+    if(result.ok) {
+        const products = await result.json();
+        return {
+            ok: true,
+            products,
+        };
+    } else {
+        console.log(result);
         return {
             ok: false,
         };

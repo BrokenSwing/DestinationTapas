@@ -51,7 +51,7 @@ class NavBar extends React.Component {
                                <Icon iconName="address-book" />
                                 <span>Amis</span>
                             </a>
-                            <a className="navbar-item">
+                            <a className="navbar-item navigate" href={Aviator.hrefFor("/products")}>
                                 <Icon iconName="pizza-slice" />
                                 <span>Carte</span>
                             </a>

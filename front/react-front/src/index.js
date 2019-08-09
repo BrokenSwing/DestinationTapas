@@ -1,8 +1,8 @@
 import React from 'react';
-import './index.css';
 import "bulma";
 import App from './App';
 import Auth from "./screens/auth/Auth";
+import Products from "./screens/products/Products";
 import 'aviator'
 import {requiresAuth, renderLater, render, isConnected} from "./routing";
 
@@ -19,6 +19,7 @@ Aviator.setRoutes({
             render(<Auth />)
         }
     },
+    '/products': renderLater(<Products/>),
 });
 
 Aviator.dispatch();

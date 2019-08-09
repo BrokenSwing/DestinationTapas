@@ -1,7 +1,7 @@
 from rest_framework import generics
-from .serializers import UserSerializer, FriendRequestsSerializer
+from .serializers import UserSerializer, FriendRequestsSerializer, ProductSerializer
 from django.contrib.auth.models import User
-from .models import FriendRequest
+from .models import FriendRequest, Product
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -28,6 +28,16 @@ class FriendRequestsView(generics.ListAPIView):
     queryset = FriendRequest.objects.all()
     serializer_class = FriendRequestsSerializer
 
+
+# Products #
+
+class ProductsView(generics.ListAPIView):
+
+    queryset = Product.objects.filter(old=False)
+    serializer_class = ProductSerializer
+
+
+# Auth #
 
 class WithUserIdTokenProviderView(ObtainAuthToken):
 
