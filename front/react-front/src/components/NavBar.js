@@ -2,6 +2,7 @@ import React from "react";
 import Icon from "./Icon";
 import "aviator";
 import { withCookies } from "react-cookie";
+import { isConnected } from "../routing";
 
 class NavBar extends React.Component {
 
@@ -28,9 +29,11 @@ class NavBar extends React.Component {
             <nav className="navbar has-shadow is-spaced">
                 <div className="container">
                     <div className="navbar-brand">
-                        <h1 className="navbar-item">
-                            Destination Tapas
-                        </h1>
+                        <a className="navbar-item navigate" href={Aviator.hrefFor("/")}>
+                            <h1>
+                                Destination Tapas
+                            </h1>
+                        </a>
                         <div className="navbar-burger" ref={this.burger} aria-label="menu" aria-expanded="false" onClick={this.onBurgerClick}>
                             <span aria-expanded="true" />
                             <span aria-expanded="true" />
@@ -39,28 +42,42 @@ class NavBar extends React.Component {
                     </div>
                     <div className="navbar-menu" ref={this.menu}>
                         <div className="navbar-start">
-                            <a className="navbar-item">
-                                <Icon iconName="user" />
-                                <span>Profil</span>
-                            </a>
-                            <a className="navbar-item">
-                                <Icon iconName="glass-cheers" />
-                                <span>Soirée</span>
-                            </a>
-                            <a className="navbar-item">
-                               <Icon iconName="address-book" />
-                                <span>Amis</span>
-                            </a>
+                            {
+                                isConnected() ?
+                                    <>
+                                        <a className="navbar-item">
+                                            <Icon iconName="user" />
+                                            <span>Profil</span>
+                                        </a>
+                                        <a className="navbar-item">
+                                            <Icon iconName="address-book"/>
+                                            <span>Amis</span>
+                                        </a>
+                                        <a className="navbar-item">
+                                            <Icon iconName="glass-cheers" />
+                                            <span>Soirée</span>
+                                        </a>
+                                    </>
+                                    : ''
+                            }
                             <a className="navbar-item navigate" href={Aviator.hrefFor("/products")}>
                                 <Icon iconName="pizza-slice" />
                                 <span>Carte</span>
                             </a>
                         </div>
                         <div className="navbar-end">
-                            <a className="navbar-item" onClick={this.triggerDisconnection}>
-                                 <Icon iconName="sign-out-alt" />
-                                <span>Se déconnecter</span>
-                            </a>
+                            {
+                                isConnected() ?
+                                    <a className="navbar-item" onClick={this.triggerDisconnection}>
+                                        <Icon iconName="sign-out-alt" />
+                                        <span>Se déconnecter</span>
+                                    </a>
+                                    :
+                                    <a className="navbar-item navigate" href={Aviator.hrefFor("/auth")}>
+                                        <Icon iconName="sign-in-alt" />
+                                        <span>Se connecter</span>
+                                    </a>
+                            }
                         </div>
                     </div>
                 </div>

@@ -11,8 +11,28 @@ class Products extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            products: null
-        }
+            products: null,
+            filteredProducts: null,
+        };
+        this.filterProducts = this.filterProducts.bind(this);
+    }
+
+    filterProducts(search) {
+        search = search.target.value.toLowerCase();
+        let filtered = [];
+        this.state.products.forEach(product => {
+            if(product.name.toLowerCase().indexOf(search) !== -1) {
+                filtered.push(product);
+            } else if(product.ingredients.length > 0) {
+                const concat = product.ingredients.reduce((first, second) => first.name + " " + second.name).toLowerCase();
+                if(concat.indexOf(search) !== -1) {
+                    filtered.push(product);
+                }
+            }
+        });
+        this.setState({
+            filteredProducts: filtered,
+        })
     }
 
     componentWillMount() {
@@ -20,6 +40,7 @@ class Products extends React.Component {
             if(result.ok) {
                 this.setState({
                     products: result.products,
+                    filteredProducts: result.products,
                 });
             } else {
                 console.log(JSON.stringify(result));
@@ -34,7 +55,7 @@ class Products extends React.Component {
         <>
             <NavBar />
             {
-                this.state.products ? ShowProducts(this.state.products) :
+                this.state.filteredProducts ? ShowProducts(this.state.filteredProducts, this.filterProducts) :
                     <ProgressBar/>
             }
             <Footer />
@@ -51,7 +72,7 @@ const TYPES_TO_CAT = {
     "COCKTAIL": "Cocktails"
 };
 
-function ShowProducts(products) {
+function ShowProducts(products, searchCb) {
 
     const cats = {
         "SHOT": [],
@@ -71,6 +92,16 @@ function ShowProducts(products) {
         <section className="section">
             <div className="container">
                 <h1 className="title">Liste des produits</h1>
+                <div className="columns">
+                    <div className="column is-two-fifths">
+                        <p className="control has-icons-left">
+                            <input className="input" type="text" placeholder="Rechercher" onChange={searchCb} />
+                            <span className="icon is-small is-left">
+                                <i className="fas fa-search" aria-hidden="true" />
+                            </span>
+                        </p>
+                    </div>
+                </div>
                 <ProductsList>
                     {Object.keys(cats).map((cat) => (
                         <ProductsCategory key={cat} name={TYPES_TO_CAT[cat]}>

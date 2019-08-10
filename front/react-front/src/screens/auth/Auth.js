@@ -6,6 +6,7 @@ import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
 import { fetchToken } from "../../api/api"
 import "aviator";
+import NavBar from "../../components/NavBar";
 
 const SignInSchema = Yup.object().shape({
     username: Yup.string()
@@ -20,42 +21,47 @@ class Auth extends React.Component {
     render() {
         return (
         <>
-            <Formik
-                onSubmit={(values, actions) => {
-                    fetchToken(values.username, values.password)
-                        .then(result => {
-                            actions.setSubmitting(false);
-                            if(result.ok) {
-                                this.props.cookies.set("auth_token", result.token);
-                                Aviator.refresh();
-                            } else {
-                                actions.setFieldError("password", "Mot de passe incorrect");
-                            }
-                        })
-                        .catch((err) => {
-                            console.log(err);
-                            actions.setSubmitting(false);
-                            actions.setFieldError("password", "Vérifiez votre connexion ou l'état du serveur");
-                        });
-                }}
+            <NavBar />
+            <section className="section">
+                <div className="container">
+                    <Formik
+                        onSubmit={(values, actions) => {
+                            fetchToken(values.username, values.password)
+                                .then(result => {
+                                    actions.setSubmitting(false);
+                                    if(result.ok) {
+                                        this.props.cookies.set("auth_token", result.token);
+                                        Aviator.refresh();
+                                    } else {
+                                        actions.setFieldError("password", "Mot de passe incorrect");
+                                    }
+                                })
+                                .catch((err) => {
+                                    console.log(err);
+                                    actions.setSubmitting(false);
+                                    actions.setFieldError("password", "Vérifiez votre connexion ou l'état du serveur");
+                                });
+                        }}
 
-                initialValues={{
-                    username: '',
-                    password: ''
-                }}
+                        initialValues={{
+                            username: '',
+                            password: ''
+                        }}
 
-                validationSchema={SignInSchema}
+                        validationSchema={SignInSchema}
 
-                render={(props) => (
-                    <Form className="form">
-                        <Field name="username" type="text" placeholder="Nom d'utilisateur" component={FormField} />
-                        <Field name="password" type="password" placeholder="Mot de passe" component={FormField} />
-                        <FormSubmit formProps={props}>
-                            {props.isSubmitting ? "Connexion ..." : "Se connecter"}
-                        </FormSubmit>
-                    </Form>
-                )}
-            />
+                        render={(props) => (
+                            <Form className="form">
+                                <Field name="username" type="text" placeholder="Nom d'utilisateur" component={FormField} />
+                                <Field name="password" type="password" placeholder="Mot de passe" component={FormField} />
+                                <FormSubmit formProps={props}>
+                                    {props.isSubmitting ? "Connexion ..." : "Se connecter"}
+                                </FormSubmit>
+                            </Form>
+                        )}
+                    />
+                </div>
+            </section>
             <Footer />
         </>
     )}

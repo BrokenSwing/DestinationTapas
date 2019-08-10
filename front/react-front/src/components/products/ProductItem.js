@@ -9,13 +9,19 @@ export default class ProductItem extends React.Component {
         };
     }
 
+    componentWillUnmount() {
+        if(this.props.list.state.selectedProduct === this) {
+            this.props.list.onProductSelect(this);
+        }
+    }
+
     render() {
         return (
             <li>
                 <a className={this.state.selected ? 'is-active' : ''} onClick={() => this.props.list.onProductSelect(this)}>
                     <div className="columns is-mobile">
                         <div className="column">
-                            {this.props.name} ~ {this.props.price}€
+                            {this.props.name} {this.props.showCommandButton ? ` ~ ${this.props.price}€` : ''}
                             {
                                 this.state.selected && this.props.ingredients.length > 0 ?
                                     <div className="columns is-mobile">
@@ -37,7 +43,7 @@ export default class ProductItem extends React.Component {
                                         }>
                                     Commander
                                 </button>
-                            </div> : ''
+                            </div> : <div className="column has-text-right">{this.props.price}€</div>
                         }
                     </div>
                 </a>

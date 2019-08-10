@@ -1,5 +1,5 @@
 import React from 'react';
-import "bulma";
+import "./style.sass";
 import App from './App';
 import Auth from "./screens/auth/Auth";
 import Products from "./screens/products/Products";
