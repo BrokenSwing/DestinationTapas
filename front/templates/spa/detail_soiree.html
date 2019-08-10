@@ -68,12 +68,20 @@
                     <h1 class="title is-4 has-text-centered">Détail de la soirée</h1>
                 <hr />
 
-
-                <div class="field">
-                    <p class="control">
-                        <a class="button is-link">Nouvelle commande</a>
-                    </p>
+                <div class="field has-text-centered">
+                    <a class="button is-fullwidth">
+                        <span class="icon is-small">
+                            <i class="fas fa-users"></i>
+                        </span>
+                        <span>Participants (3)</span>
+                    </a>
                 </div>
+
+                <div class="field has-text-centered">
+                        <a class="button is-link is-fullwidth">Nouvelle commande</a>
+                </div>
+
+                <h2 class="subtitle">Commandes : </h2>
 
 
                 <div class="box">
@@ -118,17 +126,8 @@
                     </div>
                 </div>
 
-                <div class="field">
-                    <a class="button">
-                        <span class="icon is-small">
-                            <i class="fas fa-users"></i>
-                        </span>
-                        <span>Participants</span>
-                    </a>
-                </div>
-
                 <div class="field has-text-centered">
-                    <a class="button is-link">
+                    <a class="button is-link is-fullwidth">
                         <span class="icon is-small">
                             <i class="fas fa-receipt"></i>
                         </span>
@@ -140,15 +139,50 @@
                     <div class="modal-background"></div>
                     <div class="modal-card">
                         <header class="modal-card-head">
-                            <p class="modal-card-title">La cuenta</p>
+                            <p class="modal-card-title has-text-centered">La cuenta</p>
                             <button class="delete" aria-label="close"></button>
                         </header>
+
                         <section class="modal-card-body">
-                            fojsdgiofdsigdfiohiofdhgudfhgudsfhg
+                            <div class="table-container">
+                                <table class="table is-striped is-fullwidth">
+                                    <thead>
+                                        <tr>
+                                            <th>Nom</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Simon</td>
+                                            <td>20€</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Florent</td>
+                                            <td>19€</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Timy</td>
+                                            <td>5€</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Autre</td>
+                                            <td>3.04€</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th></th>
+                                            <th>47.04€</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                         </section>
+
                         <footer class="modal-card-foot">
                             <button class="button is-success">Terminer la soirée</button>
-                            <button class="button">Cancel</button>
+                            <button class="button">Annuler</button>
                         </footer>
                     </div>
                 </div>
