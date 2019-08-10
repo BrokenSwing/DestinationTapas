@@ -3,6 +3,8 @@ import "./style.sass";
 import App from './App';
 import Auth from "./screens/auth/Auth";
 import Products from "./screens/products/Products";
+import Parties from "./screens/party/Parties";
+import PartyDetails from "./screens/party/details/PartyDetails";
 import 'aviator'
 import {requiresAuth, renderLater, render, isConnected} from "./routing";
 
@@ -20,6 +22,10 @@ Aviator.setRoutes({
         }
     },
     '/products': renderLater(<Products/>),
+    '/parties': {
+        '/': requiresAuth(renderLater(<Parties />)),
+        '/:id': requiresAuth(renderLater(<PartyDetails />))
+    }
 });
 
 Aviator.dispatch();

@@ -8,5 +8,7 @@ urlpatterns = [
     path('red/', index, name="red"),
     path('green/', index, name="green"),
     path('auth/', index, name="auth"),
-    path('products/', index, name="products")
+    path('products/', index, name="products"),
+    path('parties/', index, name="parties"),
+    path('parties/<int:pk>/', index, name="party-detail"),
 ]

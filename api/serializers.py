@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import FriendRequest, Product
+from .models import FriendRequest, Product, Party, Command
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -33,3 +33,19 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         exclude = []
         depth = 1
+
+
+class PartySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Party
+        fields = ["id", "total_price", "leader", "status", "members", "commands", "date", "price_per_user"]
+
+
+class CommandSerializer(serializers.ModelSerializer):
+
+    product = ProductSerializer()
+
+    class Meta:
+        model = Command
+        fields = ["author", "product", "contributions", "date", "total_price"]

@@ -56,7 +56,6 @@ class Product(models.Model):
 
 
 class Shot(Product):
-
     pass
 
 
@@ -88,7 +87,6 @@ class ShotTrayCommand(Command):
 
 
 class CommandContribution(models.Model):
-
     command = models.ForeignKey(Command, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     part = models.FloatField()
@@ -121,10 +119,11 @@ class Party(models.Model):
     @property
     def total_price(self):
         """Return the total price for the party"""
-        return CommandContribution.objects.filter(command__party=self).aggregate(models.Sum('part'))['part__sum']
+        result = CommandContribution.objects.filter(command__party=self).aggregate(models.Sum('part'))['part__sum']
+        return result if result is not None else 0
 
     @property
     def price_per_user(self):
         """Returns the price each user needs to pay"""
-        return CommandContribution.objects.filter(command__party=self).values('user')\
+        return CommandContribution.objects.filter(command__party=self).values('user') \
             .annotate(total=models.Sum('part')).order_by('user__username')

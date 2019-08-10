@@ -1,7 +1,7 @@
 from rest_framework import generics
-from .serializers import UserSerializer, FriendRequestsSerializer, ProductSerializer
+from .serializers import UserSerializer, FriendRequestsSerializer, ProductSerializer, PartySerializer, CommandSerializer
 from django.contrib.auth.models import User
-from .models import FriendRequest, Product
+from .models import FriendRequest, Product, Party, Command
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -50,3 +50,31 @@ class WithUserIdTokenProviderView(ObtainAuthToken):
             'token': token.key,
             'id': user.id
         })
+
+
+# Parties #
+
+class PartiesView(generics.ListAPIView):
+
+    queryset = Party.objects.all()
+    serializer_class = PartySerializer
+
+
+class PartyDetailView(generics.RetrieveAPIView):
+
+    queryset = Party.objects.all()
+    serializer_class = PartySerializer
+
+
+# Commands
+
+class CommandsView(generics.ListAPIView):
+
+    queryset = Command.objects.all()
+    serializer_class = CommandSerializer
+
+
+class CommandDetailView(generics.RetrieveAPIView):
+
+    queryset = Command.objects.all()
+    serializer_class = CommandSerializer

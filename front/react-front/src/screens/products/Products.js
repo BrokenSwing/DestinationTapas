@@ -4,6 +4,7 @@ import NavBar from "../../components/NavBar"
 import Footer from "../../components/Footer";
 import { ProductItem, ProductsCategory, ProductsList } from "../../components/products";
 import ProgressBar from "../../components/ProgressBar";
+import Icon from "../../components/Icon";
 import { fetchAllProducts } from "../../api/api";
 
 class Products extends React.Component {
@@ -35,15 +36,13 @@ class Products extends React.Component {
         })
     }
 
-    componentWillMount() {
+    componentDidMount() {
         fetchAllProducts().then((result) => {
             if(result.ok) {
                 this.setState({
                     products: result.products,
                     filteredProducts: result.products,
                 });
-            } else {
-                console.log(JSON.stringify(result));
             }
         }).catch((error) => {
             console.log(error);
@@ -96,9 +95,7 @@ function ShowProducts(products, searchCb) {
                     <div className="column is-two-fifths">
                         <p className="control has-icons-left">
                             <input className="input" type="text" placeholder="Rechercher" onChange={searchCb} />
-                            <span className="icon is-small is-left">
-                                <i className="fas fa-search" aria-hidden="true" />
-                            </span>
+                            <Icon iconName="search" iconClasses="is-small is-left" />
                         </p>
                     </div>
                 </div>

@@ -53,13 +53,20 @@ export const fetchToken = async (username, password) => {
     }
 };
 
+const userCache = {};
+
 export const fetchAllUsers = async () => {
     const result = await get(endpoints.ALL_USERS);
     if(result.ok) {
-        const users = await  result.json();
+        const users = await result.json();
+
+        users.forEach(user => {
+           userCache[user.id] = user;
+        });
+
         return {
             ok: true,
-            ...users,
+            users,
         };
     } else {
         return {
@@ -68,14 +75,22 @@ export const fetchAllUsers = async () => {
     }
 };
 
-export const fetchUserData = async (userId) => {
-    const result = await get(endpoints.SINGLE_USER(userId));
-    if(result.ok) {
-        const jsonBody = await result.json();
+export const fetchUser = async (userId) => {
+    if(userCache[userId]) {
         return {
             ok: true,
-            ...jsonBody,
-        }
+            user: userCache[userId],
+        };
+    }
+
+    const result = await get(endpoints.SINGLE_USER(userId));
+    if(result.ok) {
+        const user = await result.json();
+        userCache[userId] = user;
+        return {
+            ok: true,
+            user,
+        };
     } else {
         return {
             ok: false,
@@ -92,7 +107,51 @@ export const fetchAllProducts = async () => {
             products,
         };
     } else {
-        console.log(result);
+        return {
+            ok: false,
+        };
+    }
+};
+
+export const fetchAllParties = async () => {
+    const result = await get(endpoints.ALL_PARTIES);
+    if(result.ok) {
+        const parties = await result.json();
+        return {
+            ok: true,
+            parties,
+        }
+    } else {
+        return {
+            ok: false,
+        };
+    }
+};
+
+export const fetchParty = async (partyId) => {
+    const result = await get(endpoints.SINGLE_PARTY(partyId));
+    if(result.ok) {
+        const party = await result.json();
+        return {
+            ok: true,
+            party,
+        };
+    } else {
+        return {
+            ok: false
+        }
+    }
+};
+
+export const fetchCommand = async (commandId) => {
+    const result = await get(endpoints.SINGLE_COMMAND(commandId));
+    if(result.ok) {
+        const command = await result.json();
+        return {
+            ok: true,
+            command,
+        };
+    } else {
         return {
             ok: false,
         };
