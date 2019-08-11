@@ -5,6 +5,10 @@ import Icon from "../../components/Icon";
 import { fetchAllParties, createParty } from "../../api/api";
 import "aviator";
 
+const compareNumbers = (a, b) => {
+    return a > b ? 1 : a < b ? -1 : 0;
+};
+
 export default class Parties extends React.Component {
 
     constructor(props) {
@@ -33,11 +37,11 @@ export default class Parties extends React.Component {
     }
 
     componentDidMount() {
-        fetchAllParties().then(result => {
+        fetchAllParties(localStorage.getItem("userId")).then(result => {
            if(result.ok) {
                this.setState({
-                   parties: result.parties
-               })
+                   parties: result.parties,
+               });
            }
         }).catch(err => {
             console.log(err);
@@ -67,10 +71,16 @@ export default class Parties extends React.Component {
                         {
                             this.state.parties === null ? '' :
                                 this.state.parties.filter(party => party.status === "IN PROGRESS")
-                                    .sort((first, second) => new Date(first.date).getTime() < new Date(second.date).getTime())
+                                    .sort((first, second) => compareNumbers(new Date(second.date).getTime(), new Date(first.date).getTime()))
                                     .map(party => (
                                         <PartyDisplay key={party.id} party={party}/>
                                     ))
+                        }
+
+                        {
+                            this.state.parties &&
+                            this.state.parties.filter(party => party.status === "IN PROGRESS").length === 0 &&
+                                <h3 className="has-text-centered subtitle is-size-6">Pas de soirées en cours</h3>
                         }
 
                         <h2 className="subtitle">Historique</h2>
@@ -78,10 +88,16 @@ export default class Parties extends React.Component {
                         {
                             this.state.parties === null ? '' :
                                 this.state.parties.filter(party => party.status === "FINISHED")
-                                    .sort((first, second) => new Date(first.date).getTime() < new Date(second.date).getTime())
+                                    .sort((first, second) => compareNumbers(new Date(second.date).getTime(), new Date(first.date).getTime()))
                                     .map(party => (
                                         <PartyDisplay key={party.id} party={party} />
                                     ))
+                        }
+
+                        {
+                            this.state.parties &&
+                            this.state.parties.filter(party => party.status === "FINISHED").length === 0 &&
+                                <h3 className="has-text-centered subtitle is-size-6">Pas de soirées terminées</h3>
                         }
 
                     </div>

@@ -10,7 +10,7 @@ import NavBar from "../../components/NavBar";
 
 const SignInSchema = Yup.object().shape({
     username: Yup.string()
-        .max(150, "Maximum 150 characters")
+        .max(20, "Maximum 20 characters")
         .required("Requis"),
     password: Yup.string()
         .required("Requis"),
@@ -31,6 +31,7 @@ class Auth extends React.Component {
                                     actions.setSubmitting(false);
                                     if(result.ok) {
                                         this.props.cookies.set("auth_token", result.token);
+                                        localStorage.setItem("userId", result.id);
                                         Aviator.refresh();
                                     } else {
                                         actions.setFieldError("password", "Mot de passe incorrect");

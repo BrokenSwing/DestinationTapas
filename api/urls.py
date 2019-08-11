@@ -1,9 +1,10 @@
 # api/urls.py
 
-from django.urls import path
+from django.urls import path, register_converter
 from rest_framework.urlpatterns import format_suffix_patterns
 from .views import UsersView, FriendRequestsView, WithUserIdTokenProviderView, \
-    UserDetailView, ProductsView, PartiesView, PartyDetailView, CommandsView, CommandDetailView
+    UserDetailView, ProductsView, PartiesView, PartyDetailView, CommandsView, CommandDetailView, PartyMembersUpdateView
+
 
 urlpatterns = {
     path('users/', UsersView.as_view(), name="users"),
@@ -13,8 +14,9 @@ urlpatterns = {
     path('products/', ProductsView.as_view(), name="products"),
     path('parties/', PartiesView.as_view(), name="parties"),
     path('parties/<int:pk>/', PartyDetailView.as_view(), name="party-detail"),
+    path('parties/<int:pk>/members/', PartyMembersUpdateView.as_view(), name="party-members"),
     path('commands/', CommandsView.as_view(), name="commands"),
-    path('commands/<int:pk>/', CommandDetailView.as_view(), name="command-detail")
+    path('commands/<int:pk>/', CommandDetailView.as_view(), name="command-detail"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

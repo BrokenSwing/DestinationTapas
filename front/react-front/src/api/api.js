@@ -113,8 +113,8 @@ export const fetchAllProducts = async () => {
     }
 };
 
-export const fetchAllParties = async () => {
-    const result = await get(endpoints.ALL_PARTIES);
+export const fetchAllParties = async (belongsTo) => {
+    const result = await get(endpoints.ALL_PARTIES(belongsTo));
     if(result.ok) {
         const parties = await result.json();
         return {
@@ -144,7 +144,7 @@ export const fetchParty = async (partyId) => {
 };
 
 export const createParty = async () => {
-    const result = await postWithToken(endpoints.ALL_PARTIES);
+    const result = await postWithToken(endpoints.ALL_PARTIES());
     if(result.ok) {
         const party = await result.json();
         return {
@@ -166,6 +166,20 @@ export const fetchCommand = async (commandId) => {
             ok: true,
             command,
         };
+    } else {
+        return {
+            ok: false,
+        };
+    }
+};
+
+export const addMemberToParty = async (partyId, userId) => {
+    const result = await postWithToken(endpoints.PARTY_MEMBERS(partyId),  {
+        action: "ADD",
+        user: userId,
+    });
+    if(result.ok) {
+        const members = await result.json();
     } else {
         return {
             ok: false,

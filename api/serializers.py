@@ -5,7 +5,7 @@ from .models import FriendRequest, Product, Party, Command
 
 class UserSerializer(serializers.ModelSerializer):
 
-    password = serializers.CharField(max_length=200, write_only=True)
+    password = serializers.CharField(max_length=25, write_only=True)
     email = serializers.EmailField(write_only=True)
 
     class Meta:
@@ -50,3 +50,9 @@ class CommandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Command
         fields = ["author", "product", "contributions", "date", "total_price"]
+
+
+class MemberOperationSerializer(serializers.Serializer):
+
+    action = serializers.ChoiceField(choices=["ADD", "REMOVE"])
+    user = serializers.IntegerField()

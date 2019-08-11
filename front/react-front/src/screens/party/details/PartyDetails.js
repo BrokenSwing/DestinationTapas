@@ -35,6 +35,9 @@ export default class PartyDetails extends React.Component {
             <NavBar />
             <section className="section">
                 <div className="container">
+                    <a className="is-link navigate" href={Aviator.hrefFor("/parties")}>
+                        <Icon iconName="arrow-left" iconClasses="is-small" /><span>Retour</span>
+                    </a>
                     <h1 className="title">Détail de la soirée</h1>
 
                     {
@@ -49,7 +52,8 @@ export default class PartyDetails extends React.Component {
                         </div>
 
                         <div className="field has-text-centered">
-                            <a className="button is-link is-fullwidth" disabled={this.state.party.status === "FINISHED"}>
+                            <a className="button is-link is-fullwidth"
+                               disabled={this.state.party.status === "FINISHED" || !this.state.party.members.includes(localStorage.getItem("userId"))}>
                                 Nouvelle commande
                             </a>
                         </div>
@@ -59,6 +63,11 @@ export default class PartyDetails extends React.Component {
                         {this.state.party.commands.map(commandId => (
                             <Command key={commandId} commandId={commandId} />
                         ))}
+
+                        {
+                            this.state.party.commands.length === 0 &&
+                            <h3 className="has-text-centered subtitle is-size-6">Pas de commandes</h3>
+                        }
                     </>
                     }
                     {modal}
@@ -140,7 +149,7 @@ class PartyRecap extends React.Component {
         if(!this.props.party) {
             return null;
         }
-        const finished = this.props.party.status === "FINISHED";
+        const cantModify = this.props.party.status === "FINISHED" || !this.props.party.members.includes(localStorage.getItem("userId"));
         return (
         <>
            <div className="field has-text-centered">
@@ -180,12 +189,18 @@ class PartyRecap extends React.Component {
                                     ))
                                 }
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Total</th>
+                                        <th className="has-text-right">{this.props.party.total_price}€</th>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </section>
 
                     <footer className="modal-card-foot">
-                        <button className="button is-success" disabled={finished}>Terminer la soirée</button>
+                        <button className="button is-success" disabled={cantModify}>Terminer la soirée</button>
                         <button className="button" onClick={this.closeModal}>Annuler</button>
                     </footer>
                 </div>
