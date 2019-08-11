@@ -1,10 +1,11 @@
-from rest_framework import generics
+from rest_framework import generics, permissions
 from .serializers import UserSerializer, FriendRequestsSerializer, ProductSerializer, PartySerializer, CommandSerializer
 from django.contrib.auth.models import User
 from .models import FriendRequest, Product, Party, Command
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from rest_framework import status
 
 
 # Users #
@@ -54,10 +55,19 @@ class WithUserIdTokenProviderView(ObtainAuthToken):
 
 # Parties #
 
-class PartiesView(generics.ListAPIView):
+class PartiesView(generics.ListCreateAPIView):
 
     queryset = Party.objects.all()
     serializer_class = PartySerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        party = Party.objects.create(leader=user, status="IN PROGRESS")
+        party.members.add(user)
+        serializer = self.get_serializer(party)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class PartyDetailView(generics.RetrieveAPIView):

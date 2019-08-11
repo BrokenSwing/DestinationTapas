@@ -143,6 +143,21 @@ export const fetchParty = async (partyId) => {
     }
 };
 
+export const createParty = async () => {
+    const result = await postWithToken(endpoints.ALL_PARTIES);
+    if(result.ok) {
+        const party = await result.json();
+        return {
+            ok: true,
+            party,
+        }
+    } else {
+        return {
+            ok: false,
+        };
+    }
+};
+
 export const fetchCommand = async (commandId) => {
     const result = await get(endpoints.SINGLE_COMMAND(commandId));
     if(result.ok) {

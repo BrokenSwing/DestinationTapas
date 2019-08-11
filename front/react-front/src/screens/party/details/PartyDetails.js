@@ -49,7 +49,9 @@ export default class PartyDetails extends React.Component {
                         </div>
 
                         <div className="field has-text-centered">
-                            <a className="button is-link is-fullwidth">Nouvelle commande</a>
+                            <a className="button is-link is-fullwidth" disabled={this.state.party.status === "FINISHED"}>
+                                Nouvelle commande
+                            </a>
                         </div>
 
                         <h2 className="subtitle">Commandes :</h2>
@@ -135,9 +137,10 @@ class PartyRecap extends React.Component {
     }
 
     render() {
-        if(this.props.party === null) {
+        if(!this.props.party) {
             return null;
         }
+        const finished = this.props.party.status === "FINISHED";
         return (
         <>
            <div className="field has-text-centered">
@@ -166,10 +169,13 @@ class PartyRecap extends React.Component {
                                 </thead>
                                 <tbody>
                                 {
-                                    this.props.party.price_per_user.map(priceLine => (
-                                        <tr key={priceLine.user}>
-                                            <td><UserName userId={priceLine.user} /></td>
-                                            <td className="has-text-right">{priceLine.total}€</td>
+                                    this.props.party.members.map(memberId => (
+                                        <tr key={memberId}>
+                                            <td><UserName userId={memberId} /></td>
+                                            <td className="has-text-right">{
+                                                this.props.party.price_per_user.filter(r => r.user === memberId).length ?
+                                                    this.props.party.price_per_user.filter(r => r.user === memberId)[0].total : "0"
+                                            }€</td>
                                         </tr>
                                     ))
                                 }
@@ -179,7 +185,7 @@ class PartyRecap extends React.Component {
                     </section>
 
                     <footer className="modal-card-foot">
-                        <button className="button is-success">Terminer la soirée</button>
+                        <button className="button is-success" disabled={finished}>Terminer la soirée</button>
                         <button className="button" onClick={this.closeModal}>Annuler</button>
                     </footer>
                 </div>

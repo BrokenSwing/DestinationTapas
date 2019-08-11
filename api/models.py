@@ -110,7 +110,7 @@ class Party(models.Model):
     status = models.CharField(max_length=11, choices=STATUS)
     members = models.ManyToManyField(User, related_name="user_members")
     date = models.DateTimeField(auto_now_add=True)
-    commands = models.ManyToManyField(Command)
+    commands = models.ManyToManyField(Command, blank=True)
 
     def __str__(self):
         return "Party n°{} of {} with {} members, state : {}".format(self.id, self.date.strftime("%a %d %b %Y at %X"),

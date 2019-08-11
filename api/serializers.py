@@ -24,7 +24,7 @@ class FriendRequestsSerializer(serializers.ModelSerializer):
     class Meta:
         model = FriendRequest
         fields = ["sender", "target", "request_date", "status"]
-        read_only = ['request_date']
+        read_only_fields = ['request_date']
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -40,6 +40,7 @@ class PartySerializer(serializers.ModelSerializer):
     class Meta:
         model = Party
         fields = ["id", "total_price", "leader", "status", "members", "commands", "date", "price_per_user"]
+        read_only_fields = ["id", "total_price", "leader", "status", "members", "commands", "date", "price_per_user"]
 
 
 class CommandSerializer(serializers.ModelSerializer):
