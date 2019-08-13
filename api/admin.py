@@ -10,5 +10,6 @@ admin.site.register([
     Command,
     FriendRequest,
     Ingredient,
-    CommandContribution
+    CommandContribution,
+    UserMisc
 ])

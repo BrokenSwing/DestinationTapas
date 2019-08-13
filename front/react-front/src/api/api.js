@@ -39,7 +39,6 @@ export const fetchToken = async (username, password) => {
         username,
         password,
     });
-    console.log(result.status);
     if(result.ok) {
         const auth_info = await result.json();
         return {
@@ -173,6 +172,21 @@ export const fetchCommand = async (commandId) => {
     }
 };
 
+export const getMembersOfParty = async (partyId) => {
+    const result = await get(endpoints.PARTY_MEMBERS(partyId));
+    if(result.ok) {
+        const members = await result.json();
+        return {
+            ok: true,
+            members,
+        };
+    } else {
+        return {
+            ok: false,
+        };
+    }
+};
+
 export const addMemberToParty = async (partyId, userId) => {
     const result = await postWithToken(endpoints.PARTY_MEMBERS(partyId),  {
         action: "ADD",
@@ -180,9 +194,59 @@ export const addMemberToParty = async (partyId, userId) => {
     });
     if(result.ok) {
         const members = await result.json();
+        return {
+            ok: true,
+            members,
+        }
+    } else if(result.status === 400) {
+        const error = await result.json();
+        return {
+            ok: true,
+            members: error.members,
+        };
+    } else {
+        return {
+            ok: false,
+        }
+    }
+};
+
+export const removeMemberFromParty = async (partyId, userId) => {
+    const result = await postWithToken(endpoints.PARTY_MEMBERS(partyId),  {
+        action: "REMOVE",
+        user: userId,
+    });
+    if(result.ok) {
+        const members = await result.json();
+        return {
+            ok: true,
+            members,
+        };
+    } else if(result.status === 400) {
+        const error = await result.json();
+        return {
+            ok: true,
+            members: error.members,
+        };
+    } else {
+        return {
+            ok: false,
+        }
+    }
+};
+
+export const fetchUserMisc = async (userId) => {
+    const result = await get(endpoints.USER_MISC(userId));
+    if(result.ok) {
+        const misc = await result.json();
+        return {
+            ok: true,
+            misc,
+        };
     } else {
         return {
             ok: false,
         };
     }
+
 };

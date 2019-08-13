@@ -45,7 +45,7 @@ class NavBar extends React.Component {
                             {
                                 isConnected() ?
                                     <>
-                                        <a className="navbar-item">
+                                        <a className="navbar-item navigate" href={Aviator.hrefFor("/profile")}>
                                             <Icon iconName="user" />
                                             <span>Profil</span>
                                         </a>

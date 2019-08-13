@@ -5,6 +5,8 @@ import Auth from "./screens/auth/Auth";
 import Products from "./screens/products/Products";
 import Parties from "./screens/party/Parties";
 import PartyDetails from "./screens/party/details/PartyDetails";
+import MembersUpdate from "./screens/party/members/MembersUpdate";
+import Profile from "./screens/profile/Profile";
 import 'aviator'
 import {requiresAuth, renderLater, render, isConnected} from "./routing";
 
@@ -18,14 +20,18 @@ Aviator.setRoutes({
                 Aviator.navigate("/");
             }
         } else {
-            render(<Auth />)
+            render(<Auth />);
         }
     },
     '/products': renderLater(<Products/>),
     '/parties': {
         '/': requiresAuth(renderLater(<Parties />)),
-        '/:id': requiresAuth(renderLater(<PartyDetails />))
-    }
+        '/:id': {
+            "/": requiresAuth(renderLater(<PartyDetails />)),
+            "/members": requiresAuth(renderLater(<MembersUpdate />))
+        }
+    },
+    '/profile': requiresAuth(renderLater(<Profile />))
 });
 
 Aviator.dispatch();

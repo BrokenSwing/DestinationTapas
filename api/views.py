@@ -1,13 +1,14 @@
 from rest_framework import generics, permissions
 from .serializers import UserSerializer, FriendRequestsSerializer, ProductSerializer, PartySerializer, \
-    CommandSerializer, MemberOperationSerializer
+    CommandSerializer, MemberOperationSerializer, UserMiscSerializer
 from django.contrib.auth.models import User
-from .models import FriendRequest, Product, Party, Command
+from .models import FriendRequest, Product, Party, Command, CommandContribution
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework import status
 from .permissions import IsMemberOfParty
+from django.db import models
 
 
 # Users #
@@ -22,6 +23,16 @@ class UserDetailView(generics.RetrieveAPIView):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+class UserMiscView(generics.RetrieveAPIView):
+
+    queryset = User.objects.all()
+    serializer_class = UserMiscSerializer
+
+    def get_object(self):
+        obj = super(UserMiscView, self).get_object()
+        return obj.usermisc
 
 
 # Friend requests #
@@ -56,7 +67,6 @@ class WithUserIdTokenProviderView(ObtainAuthToken):
 
 
 # Parties #
-
 
 class PartiesView(generics.ListCreateAPIView):
 
@@ -106,13 +116,46 @@ class PartyMembersUpdateView(generics.GenericAPIView):
         except User.DoesNotExist:
             return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
+        if queryset.status == "FINISHED":
+            return Response({
+                "detail": "Can't add or remove members from a finished party",
+                "members": PartySerializer(queryset).data['members'],
+            })
+
+        members = queryset.members.all()
+
         if serializer.data['action'] == "REMOVE":
-            return Response({"detail": "Can't remove members"}, status=status.HTTP_403_FORBIDDEN)
+            total_to_pay = CommandContribution.objects.filter(user=to_update).filter(command__party=queryset)\
+                .aggregate(models.Sum("part"))["part__sum"]
 
-        if to_update in queryset.members.all():
-            return Response({"detail": "Can't add a member already in the party"}, status=status.HTTP_400_BAD_REQUEST)
+            if total_to_pay is not None:
+                return Response({
+                    "detail": "Can't remove members needing to pay something",
+                    "members": PartySerializer(queryset).data['members'],
+                }, status=status.HTTP_400_BAD_REQUEST)
+            if to_update not in members:
+                return Response({
+                    "detail": "This user in not a member of the party",
+                    "members": PartySerializer(queryset).data['members'],
+                }, status=status.HTTP_400_BAD_REQUEST)
 
-        queryset.members.add(to_update)
+            if to_update == queryset.leader:
+                return Response({
+                    "detail": "Can't remove leader from party's members",
+                    "members": PartySerializer(queryset).data['members'],
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            queryset.members.remove(to_update)
+
+        elif serializer.data['action'] == "ADD":
+
+            if to_update in members:
+                return Response({
+                    "detail": "Can't add a member already in the party",
+                    "members": PartySerializer(queryset).data['members'],
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            queryset.members.add(to_update)
 
         serializer = PartySerializer(queryset)
         return Response(serializer.data['members'], status=status.HTTP_200_OK)

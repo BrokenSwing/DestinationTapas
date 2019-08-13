@@ -1,5 +1,6 @@
 import React from "react";
 import { fetchUser } from "../api/api";
+import PropTypes from "prop-types";
 
 export default class UserName extends React.Component {
 
@@ -17,9 +18,7 @@ export default class UserName extends React.Component {
                     user: result.user,
                 });
             }
-        }).catch(err => {
-            console.log(err);
-        })
+        }).catch(console.log)
     }
 
     render() {
@@ -29,3 +28,7 @@ export default class UserName extends React.Component {
     }
 
 }
+
+UserName.propTypes = {
+    userId: PropTypes.number.isRequired,
+};

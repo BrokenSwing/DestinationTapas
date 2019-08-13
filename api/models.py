@@ -2,6 +2,18 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+class UserMisc(models.Model):
+    """
+    Used to serve misc information about users
+    """
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    @property
+    def total_spent(self):
+        return CommandContribution.objects.filter(user=self.user).aggregate(models.Sum('part'))['part__sum']
+
+
 class FriendRequest(models.Model):
     """
     Represents a friend request made by an user to an other user.
@@ -110,6 +122,7 @@ class Party(models.Model):
     status = models.CharField(max_length=11, choices=STATUS)
     members = models.ManyToManyField(User, related_name="user_members")
     date = models.DateTimeField(auto_now_add=True)
+    end_date = models.DateTimeField(null=True, blank=True)
     commands = models.ManyToManyField(Command, blank=True)
 
     def __str__(self):

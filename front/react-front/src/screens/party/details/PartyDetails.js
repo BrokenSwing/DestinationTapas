@@ -16,16 +16,14 @@ export default class PartyDetails extends React.Component {
     }
 
     componentDidMount() {
-        const partyId = Aviator.getCurrentRequest().namedParams.id;
-        fetchParty(partyId).then(result => {
+        this.partyId = Aviator.getCurrentRequest().namedParams.id;
+        fetchParty(this.partyId).then(result => {
             if(result.ok) {
                 this.setState({
                     party: result.party,
                 });
             }
-        }).catch(err => {
-            console.log(err);
-        });
+        }).catch(console.log);
     }
 
     render() {
@@ -45,7 +43,7 @@ export default class PartyDetails extends React.Component {
                     <>
 
                         <div className="field has-text-centered">
-                            <a className="button is-fullwidth">
+                            <a className="button is-fullwidth navigate" href={Aviator.hrefFor("/parties/:id/members", this.partyId)}>
                                 <Icon iconName="users" iconClasses="is-small" />
                                 <span>Participants ({this.state.party.members.length})</span>
                             </a>

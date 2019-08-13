@@ -1,10 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import FriendRequest, Product, Party, Command
+from .models import FriendRequest, Product, Party, Command, UserMisc
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     password = serializers.CharField(max_length=25, write_only=True)
     email = serializers.EmailField(write_only=True)
 
@@ -18,7 +17,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class FriendRequestsSerializer(serializers.ModelSerializer):
-
     status = serializers.ChoiceField(['PENDING', 'ACCEPTED', 'REJECTED'], default='PENDING')
 
     class Meta:
@@ -28,7 +26,6 @@ class FriendRequestsSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Product
         exclude = []
@@ -36,15 +33,14 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class PartySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Party
-        fields = ["id", "total_price", "leader", "status", "members", "commands", "date", "price_per_user"]
-        read_only_fields = ["id", "total_price", "leader", "status", "members", "commands", "date", "price_per_user"]
+        fields = ["id", "total_price", "leader", "status", "members", "commands", "date", "price_per_user", "end_date"]
+        read_only_fields = ["id", "total_price", "leader", "status", "members", "commands", "date", "price_per_user",
+                            "end_date"]
 
 
 class CommandSerializer(serializers.ModelSerializer):
-
     product = ProductSerializer()
 
     class Meta:
@@ -53,6 +49,11 @@ class CommandSerializer(serializers.ModelSerializer):
 
 
 class MemberOperationSerializer(serializers.Serializer):
-
     action = serializers.ChoiceField(choices=["ADD", "REMOVE"])
     user = serializers.IntegerField()
+
+
+class UserMiscSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserMisc
+        fields = ["total_spent"]
