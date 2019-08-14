@@ -131,7 +131,7 @@ const PartyDisplay = ({party}) => {
                 </div>
             </div>
             {
-                party.status === "IN PROGRESS" && Date.now() - date.getTime() > 3 * 24 * 3600 * 1000 &&
+                party.status === "IN PROGRESS" && Date.now() - date.getTime() > 24 * 3600 * 1000 &&
                 <div className="notification is-warning">
                     Cette soirée semble terminée, pensez à la fermer
                 </div>

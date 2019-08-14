@@ -279,6 +279,12 @@ class PartyMembersUpdateView(generics.GenericAPIView):
 
         elif serializer.data['action'] == "ADD":
 
+            if to_update.id not in request.user.usermisc.friends:
+                return Response({
+                    "detail": "Can't add an user who isn't your friend",
+                    "members": PartySerializer(queryset).data['members'],
+                }, status=status.HTTP_400_BAD_REQUEST)
+
             if to_update in members:
                 return Response({
                     "detail": "Can't add a member already in the party",

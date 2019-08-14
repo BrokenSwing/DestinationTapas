@@ -2,9 +2,10 @@ import React from "react";
 import NavBar from "../../../components/NavBar";
 import Footer from "../../../components/Footer";
 import Icon from "../../../components/Icon";
-import { fetchParty, fetchAllUsers, addMemberToParty, removeMemberFromParty } from "../../../api/api";
+import { fetchParty, fetchUserFriends, addMemberToParty, removeMemberFromParty } from "../../../api/api";
 import "aviator";
 import { Selector, Selectable } from "../../../components/selector";
+import UserName from "../../../components/UserName";
 
 export default class MembersUpdate extends React.Component {
 
@@ -17,6 +18,7 @@ export default class MembersUpdate extends React.Component {
             party: null,
         };
         this.addMember = this.addMember.bind(this);
+        this.removeMember = this.removeMember.bind(this);
     }
 
     addMember(id) {
@@ -81,21 +83,35 @@ export default class MembersUpdate extends React.Component {
                 if(!unmodifiable.includes(result.party.leader)) {
                     unmodifiable.push(result.party.leader);
                 }
-                this.setState({
-                    members: result.party.members.slice(),
-                    party: result.party,
-                    unmodifiable,
+                this.setState((state, props) => {
+                    const users = state.users.slice();
+                    result.party.members.forEach(memberId => {
+                        if(!users.includes(memberId)) {
+                            users.push(memberId);
+                        }
+                    });
+                    return {
+                        members: result.party.members.slice(),
+                        party: result.party,
+                        users,
+                        unmodifiable,
+                    }
                 });
             }
         }).catch(console.log);
 
-        fetchAllUsers().then(result => {
+        fetchUserFriends(localStorage.getItem("userId")).then(result => {
             if(result.ok) {
-                if(result.users.length > 1) {
-                    result.users = result.users.sort((first, second) => first.username.localeCompare(second.username));
-                }
-                this.setState({
-                    users: result.users,
+                this.setState((state, props) => {
+                    const users = state.users.slice();
+                    result.friends.forEach(friendId => {
+                        if(!users.includes(friendId)) {
+                            users.push(friendId);
+                        }
+                    });
+                    return {
+                        users,
+                    };
                 });
             }
         }).then(console.log);
@@ -114,14 +130,14 @@ export default class MembersUpdate extends React.Component {
                         <h1 className="title">Participants ({this.state.members.length})</h1>
 
                         <Selector>
-                            {this.state.users.map(user => (
-                                <Selectable key={user.id}
-                                            selected={this.state.members.includes(user.id)}
-                                            onSelect={() => this.addMember(user.id)}
-                                            onDeselect={() => this.removeMember(user.id)}
-                                            locked={this.state.unmodifiable.includes(user.id) || this.state.party && this.state.party.status === "FINISHED"}
+                            {this.state.users.map(id => (
+                                <Selectable key={id}
+                                            selected={this.state.members.includes(id)}
+                                            onSelect={() => this.addMember(id)}
+                                            onDeselect={() => this.removeMember(id)}
+                                            locked={this.state.unmodifiable.includes(id) || this.state.party && this.state.party.status === "FINISHED"}
                                 >
-                                    {user.username}
+                                    <UserName userId={id} />
                                 </Selectable>
                             ))}
                         </Selector>
