@@ -49,7 +49,7 @@ class NavBar extends React.Component {
                                             <Icon iconName="user" />
                                             <span>Profil</span>
                                         </a>
-                                        <a className="navbar-item">
+                                        <a className="navbar-item navigate" href={Aviator.hrefFor("/friends")}>
                                             <Icon iconName="address-book"/>
                                             <span>Amis</span>
                                         </a>
