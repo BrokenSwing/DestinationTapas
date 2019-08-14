@@ -1,13 +1,13 @@
 from rest_framework import generics, permissions
-from .serializers import UserSerializer, FriendRequestsSerializer, ProductSerializer, PartySerializer, \
-    CommandSerializer, MemberOperationSerializer, UserMiscSerializer
+from .serializers import UserSerializer, ProductSerializer, PartySerializer, \
+    CommandSerializer, MemberOperationSerializer, UserMiscSerializer, UserFriendsSerializer, FriendOperationSerializer
 from django.contrib.auth.models import User
 from .models import FriendRequest, Product, Party, Command, CommandContribution
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework import status
-from .permissions import IsMemberOfParty
+from .permissions import IsMemberOfParty, IsOwner
 from django.db import models
 
 
@@ -37,10 +37,140 @@ class UserMiscView(generics.RetrieveAPIView):
 
 # Friend requests #
 
-class FriendRequestsView(generics.ListAPIView):
+class FriendsView(generics.RetrieveAPIView):
 
-    queryset = FriendRequest.objects.all()
-    serializer_class = FriendRequestsSerializer
+    queryset = User.objects.all()
+    serializer_class = FriendOperationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        obj = super(FriendsView, self).get_object()
+        return obj.usermisc
+
+    def get(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = UserFriendsSerializer(instance)
+        return Response(serializer.data)
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        misc = self.get_object()
+
+        try:
+            target = User.objects.get(pk=serializer.data['user'])
+        except User.DoesNotExist:
+            return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        if target == misc.user:
+            return Response({"detail": "Can't perform any friend action on self"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if serializer.data['action'] == "ADD":
+            return self.add_friend(target)
+
+        if serializer.data['action'] == "REMOVE":
+            return self.remove_friend(target)
+
+        if serializer.data['action'] == "ACCEPT":
+            return self.accept_request(target)
+
+        if serializer.data['action'] == "REFUSE":
+            return self.refuse_request(target)
+
+        if serializer.data['action'] == "CANCEL":
+            return self.cancel_request(target)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def cancel_request(self, target):
+        misc = self.get_object()
+
+        try:
+            friend_request = FriendRequest.objects.get(from_user=misc.user, to_user=target, status="PENDING")
+        except FriendRequest.MultipleObjectsReturned:
+            return Response({
+                "detail": "Unexpected error : multiple requests found"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except FriendRequest.DoesNotExist:
+            return Response({
+                "detail": "You didn't send a friend request to this user"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        friend_request.status = "CANCELED"
+        friend_request.save()
+
+        return Response(UserFriendsSerializer(misc).data, status=status.HTTP_200_OK)
+
+    def refuse_request(self, target):
+        misc = self.get_object()
+
+        try:
+            friend_request = FriendRequest.objects.get(from_user=target, to_user=misc.user, status="PENDING")
+        except FriendRequest.MultipleObjectsReturned:
+            return Response({
+                "detail": "Unexpected error : multiple requests found"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except FriendRequest.DoesNotExist:
+            return Response({
+                "detail": "You didn't received a friend request from this user"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        friend_request.status = "REJECTED"
+        friend_request.save()
+
+        return Response(UserFriendsSerializer(misc).data, status=status.HTTP_200_OK)
+
+    def remove_friend(self, target):
+        misc = self.get_object()
+
+        if target.id not in misc.friends:
+            return Response({"detail": "This user isn't your friend."}, status=status.HTTP_400_BAD_REQUEST)
+
+        friend_request = FriendRequest.objects.filter(
+            models.Q(from_user=misc.user, to_user=target) | models.Q(from_user=target, to_user=misc.user)
+        ).filter(status="ACCEPTED")[0]
+
+        friend_request.status = "DELETED"
+        friend_request.save()
+
+        return Response(UserFriendsSerializer(misc).data, status=status.HTTP_200_OK)
+
+    def add_friend(self, target):
+        misc = self.get_object()
+
+        if target.id in misc.received_requests:
+            return self.accept_request(target)
+
+        if target.id in misc.sent_requests:
+            return Response({
+                "detail": "You already sent a friend request to this user"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        if target.id in misc.friends:
+            return Response({
+                "detail": "This user is already your friend"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        FriendRequest.objects.create(from_user=misc.user, to_user=target, status="PENDING")
+
+        return Response(UserFriendsSerializer(misc).data, status=status.HTTP_200_OK)
+
+    def accept_request(self, target):
+        misc = self.get_object()
+
+        try:
+            request = FriendRequest.objects.get(from_user=target, to_user=misc.user, status="PENDING")
+        except FriendRequest.MultipleObjectsReturned:
+            return Response({
+                "detail": "Unexpected error : multiple requests found"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except FriendRequest.DoesNotExist:
+            return Response({"detail": "You don't have any request from this user"}, status=status.HTTP_400_BAD_REQUEST)
+
+        request.status = "ACCEPTED"
+        request.save()
+
+        return Response(UserFriendsSerializer(misc).data, status=status.HTTP_200_OK)
 
 
 # Products #

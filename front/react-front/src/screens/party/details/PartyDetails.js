@@ -5,6 +5,7 @@ import Icon from "../../../components/Icon";
 import "aviator";
 import {fetchCommand, fetchParty} from "../../../api/api";
 import UserName from "../../../components/UserName";
+import { Modal, ModalCardFoot, ModalCard, ModalCardBody, ModalCardHead } from "../../../components/modals";
 
 export default class PartyDetails extends React.Component {
 
@@ -51,7 +52,7 @@ export default class PartyDetails extends React.Component {
 
                         <div className="field has-text-centered">
                             <a className="button is-link is-fullwidth"
-                               disabled={this.state.party.status === "FINISHED" || !this.state.party.members.includes(localStorage.getItem("userId"))}>
+                               disabled={this.state.party.status === "FINISHED" || !this.state.party.members.includes(Number(localStorage.getItem("userId")))}>
                                 Nouvelle commande
                             </a>
                         </div>
@@ -157,15 +158,11 @@ class PartyRecap extends React.Component {
                 </a>
             </div>
 
-            <div className={"modal " + (this.state.opened ? "is-active" : "")}>
-                <div className="modal-background" onClick={this.closeModal} />
-                <div className="modal-card">
-                    <header className="modal-card-head">
-                        <p className="modal-card-title has-text-centered">La punition</p>
-                        <button className="delete" aria-label="close" onClick={this.closeModal} />
-                    </header>
+            <Modal active={this.state.opened} onClose={this.closeModal}>
+                <ModalCard>
+                    <ModalCardHead title="La punition" onClose={this.closeModal} />
 
-                    <section className="modal-card-body">
+                    <ModalCardBody>
                         <div className="table-container">
                             <table className="table is-striped is-fullwidth">
                                 <thead>
@@ -195,14 +192,14 @@ class PartyRecap extends React.Component {
                                 </tfoot>
                             </table>
                         </div>
-                    </section>
+                    </ModalCardBody>
 
-                    <footer className="modal-card-foot">
+                    <ModalCardFoot>
                         <button className="button is-success" disabled={cantModify}>Terminer la soirée</button>
                         <button className="button" onClick={this.closeModal}>Annuler</button>
-                    </footer>
-                </div>
-            </div>
+                    </ModalCardFoot>
+                </ModalCard>
+            </Modal>
         </>
         );
     }

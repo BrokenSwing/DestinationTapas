@@ -5,14 +5,12 @@ from .views import index
 
 urlpatterns = [
     path('', index, name="index"),
-    path('red/', index, name="red"),
-    path('green/', index, name="green"),
     path('auth/', index, name="auth"),
     path('products/', index, name="products"),
+    path('friends/', index, name="friends"),
+    path('profile/', index, name="profile"),
 
     path('parties/', index, name="parties"),
     path('parties/<int:pk>/', index, name="party-detail"),
     path('parties/<int:pk>/members', index, name="party-members"),
-
-    path('profile/', index, name="profile"),
 ]

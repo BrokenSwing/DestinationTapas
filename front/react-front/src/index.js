@@ -7,6 +7,7 @@ import Parties from "./screens/party/Parties";
 import PartyDetails from "./screens/party/details/PartyDetails";
 import MembersUpdate from "./screens/party/members/MembersUpdate";
 import Profile from "./screens/profile/Profile";
+import Friends from "./screens/friends/Friends";
 import 'aviator'
 import {requiresAuth, renderLater, render, isConnected} from "./routing";
 
@@ -31,7 +32,8 @@ Aviator.setRoutes({
             "/members": requiresAuth(renderLater(<MembersUpdate />))
         }
     },
-    '/profile': requiresAuth(renderLater(<Profile />))
+    '/profile': requiresAuth(renderLater(<Profile />)),
+    '/friends': requiresAuth(renderLater(<Friends />)),
 });
 
 Aviator.dispatch();

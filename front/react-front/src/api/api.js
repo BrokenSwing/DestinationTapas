@@ -34,6 +34,12 @@ const postWithToken = (url, jsonBody, additionalHeaders={}) => {
   });
 };
 
+const getWithToken = (url, additionalHeaders={}) => {
+    return get(url, {
+        "Authorization": `Token ${cookies.get("auth_token")}`,
+    });
+};
+
 export const fetchToken = async (username, password) => {
     const result = await post(endpoints.FETCH_TOKEN, {
         username,
@@ -45,11 +51,10 @@ export const fetchToken = async (username, password) => {
             ok: true,
             ...auth_info,
         };
-    } else {
-        return {
-            ok: false,
-        };
     }
+    return {
+        ok: false,
+    };
 };
 
 const userCache = {};
@@ -67,11 +72,33 @@ export const fetchAllUsers = async () => {
             ok: true,
             users,
         };
-    } else {
+    }
+    return {
+        ok: false,
+    };
+};
+
+export const findUserIdFromName = async (userName) => {
+    let matching = Object.keys(userCache).filter(id => userCache[id].username.toLowerCase() === userName.toLowerCase());
+    if(matching.length > 0) {
         return {
-            ok: false,
+            ok: true,
+            id: matching[0],
         };
     }
+    const result = await fetchAllUsers();
+    if(result.ok) {
+        matching = result.users.filter(user => user.username.toLowerCase() === userName.toLowerCase());
+        if(matching.length > 0) {
+            return {
+                ok: true,
+                id: matching[0].id,
+            };
+        }
+    }
+    return {
+        ok: false,
+    };
 };
 
 export const fetchUser = async (userId) => {
@@ -105,11 +132,10 @@ export const fetchAllProducts = async () => {
             ok: true,
             products,
         };
-    } else {
-        return {
-            ok: false,
-        };
     }
+    return {
+        ok: false,
+    };
 };
 
 export const fetchAllParties = async (belongsTo) => {
@@ -120,11 +146,10 @@ export const fetchAllParties = async (belongsTo) => {
             ok: true,
             parties,
         }
-    } else {
-        return {
-            ok: false,
-        };
     }
+    return {
+        ok: false,
+    };
 };
 
 export const fetchParty = async (partyId) => {
@@ -135,11 +160,10 @@ export const fetchParty = async (partyId) => {
             ok: true,
             party,
         };
-    } else {
-        return {
-            ok: false
-        }
     }
+    return {
+        ok: false,
+    };
 };
 
 export const createParty = async () => {
@@ -150,11 +174,10 @@ export const createParty = async () => {
             ok: true,
             party,
         }
-    } else {
-        return {
-            ok: false,
-        };
     }
+    return {
+        ok: false,
+    };
 };
 
 export const fetchCommand = async (commandId) => {
@@ -165,11 +188,10 @@ export const fetchCommand = async (commandId) => {
             ok: true,
             command,
         };
-    } else {
-        return {
-            ok: false,
-        };
     }
+    return {
+        ok: false,
+    };
 };
 
 export const getMembersOfParty = async (partyId) => {
@@ -180,11 +202,10 @@ export const getMembersOfParty = async (partyId) => {
             ok: true,
             members,
         };
-    } else {
-        return {
-            ok: false,
-        };
     }
+    return {
+        ok: false,
+    };
 };
 
 export const addMemberToParty = async (partyId, userId) => {
@@ -204,11 +225,10 @@ export const addMemberToParty = async (partyId, userId) => {
             ok: true,
             members: error.members,
         };
-    } else {
-        return {
-            ok: false,
-        }
     }
+    return {
+        ok: false,
+    };
 };
 
 export const removeMemberFromParty = async (partyId, userId) => {
@@ -228,11 +248,10 @@ export const removeMemberFromParty = async (partyId, userId) => {
             ok: true,
             members: error.members,
         };
-    } else {
-        return {
-            ok: false,
-        }
     }
+    return {
+        ok: false,
+    };
 };
 
 export const fetchUserMisc = async (userId) => {
@@ -243,10 +262,49 @@ export const fetchUserMisc = async (userId) => {
             ok: true,
             misc,
         };
-    } else {
+    }
+    return {
+        ok: false,
+    };
+};
+
+export const fetchUserFriends = async (userId) => {
+    const result = await getWithToken(endpoints.USER_FRIENDS(userId));
+    if(result.ok) {
+        const friends = await result.json();
         return {
-            ok: false,
+            ok: true,
+            ...friends,
         };
     }
-
+    return {
+        ok: false,
+    }
 };
+
+const friendOperation = async (sender, friend, action) => {
+    const result = await postWithToken(endpoints.USER_FRIENDS(sender), {
+        action: action,
+        user: friend,
+    });
+    if(result.ok) {
+        const friends = await result.json();
+        return {
+            ok: true,
+            ...friends
+        };
+    }
+    return {
+        ok: false,
+    }
+};
+
+export const addFriend = (sender, friend) => friendOperation(sender, friend, "ADD");
+
+export const removeFriend = (sender, friend) => friendOperation(sender, friend, "REMOVE");
+
+export const acceptFriend = (sender, friend) => friendOperation(sender, friend, "ACCEPT");
+
+export const refuseFriend = (sender, friend) => friendOperation(sender, friend, "REFUSE");
+
+export const cancelFriend = (sender, friend) => friendOperation(sender, friend, "CANCEL");

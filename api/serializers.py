@@ -16,15 +16,6 @@ class UserSerializer(serializers.ModelSerializer):
         return User.objects.create_user(validated_data['username'], validated_data['email'], validated_data['password'])
 
 
-class FriendRequestsSerializer(serializers.ModelSerializer):
-    status = serializers.ChoiceField(['PENDING', 'ACCEPTED', 'REJECTED'], default='PENDING')
-
-    class Meta:
-        model = FriendRequest
-        fields = ["sender", "target", "request_date", "status"]
-        read_only_fields = ['request_date']
-
-
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
@@ -57,3 +48,15 @@ class UserMiscSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserMisc
         fields = ["total_spent"]
+
+
+class UserFriendsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserMisc
+        fields = ["received_requests", "friends", "sent_requests"]
+
+
+class FriendOperationSerializer(serializers.Serializer):
+    action = serializers.ChoiceField(choices=['ACCEPT', 'REFUSE', 'CANCEL', 'REMOVE', 'ADD'])
+    user = serializers.IntegerField()

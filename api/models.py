@@ -10,6 +10,25 @@ class UserMisc(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     @property
+    def friends(self):
+        result = FriendRequest.objects.filter(models.Q(from_user=self.user) | models.Q(to_user=self.user))\
+            .filter(status="ACCEPTED").all()
+        friends = []
+        for request in result:
+            friends.append((request.from_user if request.to_user == self.user else request.to_user).id)
+        return friends
+
+    @property
+    def received_requests(self):
+        return [request.from_user.id for request in FriendRequest.objects.filter(to_user=self.user).filter(
+            status="PENDING").all()]
+
+    @property
+    def sent_requests(self):
+        return [request.to_user.id for request in FriendRequest.objects.filter(from_user=self.user).filter(
+            status="PENDING").all()]
+
+    @property
     def total_spent(self):
         return CommandContribution.objects.filter(user=self.user).aggregate(models.Sum('part'))['part__sum']
 
@@ -23,6 +42,8 @@ class FriendRequest(models.Model):
         ('PENDING', 'PENDING'),
         ('ACCEPTED', 'ACCEPTED'),
         ('REJECTED', 'REJECTED'),
+        ('DELETED', 'DELETED'),
+        ('CANCELED', 'CANCELED'),
     )
 
     from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='request_from', default=-1)
