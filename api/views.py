@@ -41,7 +41,7 @@ class FriendsView(generics.RetrieveAPIView):
 
     queryset = User.objects.all()
     serializer_class = FriendOperationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
 
     def get_object(self):
         obj = super(FriendsView, self).get_object()
