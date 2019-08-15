@@ -1,4 +1,6 @@
 import React from "react";
+import PropTypes from "prop-types";
+import ProductsCategory from "./ProductsCategory";
 
 export default class ProductsList extends React.Component {
 
@@ -11,13 +13,13 @@ export default class ProductsList extends React.Component {
     }
 
     onProductSelect(product) {
-        if(this.state.selectedProduct !== null) {
+        if (this.state.selectedProduct !== null) {
             this.state.selectedProduct.setState({
                 selected: false,
             });
         }
 
-        if(this.state.selectedProduct === product) {
+        if (this.state.selectedProduct === product) {
             this.setState({
                 selectedProduct: null,
             });
@@ -38,10 +40,12 @@ export default class ProductsList extends React.Component {
                 <div className="column is-two-fifths">
                     <aside className="menu">
                         {React.Children.map(this.props.children,
-                      child => React.cloneElement(child, {
-                          showCommandButton: this.props.showCommandButton,
-                          list: this,
-                      }))}
+                            child => child !== null && (child.type === ProductsCategory ?
+                                React.cloneElement(child, {
+                                    showCommandButton: this.props.showCommandButton,
+                                    list: this,
+                                }) : child)
+                        )}
                     </aside>
                 </div>
             </div>
@@ -49,6 +53,10 @@ export default class ProductsList extends React.Component {
     }
 
 }
+
+ProductsList.propTypes = {
+    showCommandButton: PropTypes.bool,
+};
 
 ProductsList.defaultProps = {
     showCommandButton: false,

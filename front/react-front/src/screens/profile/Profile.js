@@ -33,7 +33,7 @@ export default class Profile extends React.Component {
                         <h1 className="title is-4 has-text-centered">Profil</h1>
 
                         <div className="box">
-                            <h2 className="subtitle"><UserName userId={localStorage.getItem("userId")} /></h2>
+                            <h2 className="subtitle"><UserName userId={Number(localStorage.getItem("userId"))} /></h2>
 
                             <div className="columns">
                                 <div className="column">

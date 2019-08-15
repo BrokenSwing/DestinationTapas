@@ -1,4 +1,6 @@
 import React from "react";
+import PropTypes from "prop-types";
+import ProductsList from "./ProductsList";
 
 export default class ProductsCategory extends React.Component {
 
@@ -8,7 +10,7 @@ export default class ProductsCategory extends React.Component {
               <p className="menu-label">{this.props.name}</p>
               <ul className="menu-list">
                   {React.Children.map(this.props.children,
-                      child => React.cloneElement(child, {
+                      child => child !== null && React.cloneElement(child, {
                           showCommandButton: this.props.showCommandButton,
                           list: this.props.list,
                       }))}
@@ -18,3 +20,8 @@ export default class ProductsCategory extends React.Component {
     }
 
 }
+
+ProductsCategory.propTypes = {
+    showCommandButton: PropTypes.bool,
+    list: PropTypes.instanceOf(ProductsList)
+};

@@ -1,4 +1,7 @@
 import React from "react";
+import PropTypes from "prop-types";
+import ProductsList from "./ProductsList";
+import ProductsCategory from "./ProductsCategory";
 
 export default class ProductItem extends React.Component {
 
@@ -52,6 +55,11 @@ export default class ProductItem extends React.Component {
     }
 
 }
+
+ProductsCategory.propTypes = {
+    showCommandButton: PropTypes.bool,
+    list: PropTypes.instanceOf(ProductsList)
+};
 
 ProductItem.defaultProps = {
     ingredients: [],
