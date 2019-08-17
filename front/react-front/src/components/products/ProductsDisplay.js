@@ -8,7 +8,9 @@ const TYPES_TO_CAT = {
     "OTHER": "Autre",
     "SHOT": "Shots",
     "FOOD": "Nourriture",
-    "COCKTAIL": "Cocktails"
+    "COCKTAIL": "Cocktails",
+    "BEER": "Bière",
+    "SOFT": "Soft"
 };
 
 export default class ProductsDisplay extends React.Component {
@@ -18,8 +20,10 @@ export default class ProductsDisplay extends React.Component {
         this.state = {
             allProducts: [],
             filtered: [],
+            selected: -1,
         };
         this.searchBarChange = this.searchBarChange.bind(this);
+        this.onProductSelection = this.onProductSelection.bind(this);
     }
 
     searchBarChange(e) {
@@ -29,10 +33,24 @@ export default class ProductsDisplay extends React.Component {
                 if (p.name.toLowerCase().indexOf(value) !== -1) {
                     return true;
                 }
+                const cat = TYPES_TO_CAT[p.product_type];
+                if(cat && cat.toLowerCase().indexOf(value) !== -1) {
+                    return true;
+                }
                 const ingredients = p.ingredients.reduce((previous, next) => previous + " " + next, "");
                 return ingredients.toLowerCase().indexOf(value) !== -1;
             }),
         }));
+    }
+
+    onProductSelection(id) {
+        this.setState((state, props) => {
+            const newSelected = state.selected === id ? -1 : id;
+            props.onProductSelection(newSelected);
+            return {
+                selected: newSelected,
+            };
+        });
     }
 
     componentDidMount() {
@@ -43,7 +61,7 @@ export default class ProductsDisplay extends React.Component {
                     filtered: result.products.filter(this.props.preFilter),
                 });
             }
-        })
+        }).catch(console.log);
     }
 
     render() {
@@ -82,13 +100,16 @@ export default class ProductsDisplay extends React.Component {
                         <ProductsCategory key={cat}
                                           name={TYPES_TO_CAT[cat]}
                         >
-                            {cats[cat].map((product) => (
-                                <ProductItem key={product.id}
-                                             price={product.price}
-                                             name={product.name}
-                                             ingredients={product.ingredients}
-                                />
-                            ))}
+                            {
+                                cats[cat].map((product) => (
+                                    <ProductItem key={product.id}
+                                                 product={product}
+                                                 onCommand={this.props.onCommand}
+                                                 onSelect={this.onProductSelection}
+                                                 selected={this.state.selected === product.id}
+                                    />
+                                ))
+                            }
                         </ProductsCategory>
                     ))}
 
@@ -103,19 +124,20 @@ export default class ProductsDisplay extends React.Component {
 
 }
 
-ProductsDisplay
-    .propTypes = {
+ProductsDisplay.propTypes = {
     showCommandButton: PropTypes.bool,
     onCommand: PropTypes.func,
     showSearchBar: PropTypes.bool,
     preFilter: PropTypes.func,
+    onProductSelection: PropTypes.func,
 };
 
-ProductsDisplay
-    .defaultProps = {
+ProductsDisplay.defaultProps = {
     showCommandButton: false,
     onCommand: () => {
     },
     showSearchBar: true,
     preFilter: () => true,
+    onProductSelection: () => {
+    },
 };

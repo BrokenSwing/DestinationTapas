@@ -67,7 +67,7 @@ export default class MembersUpdate extends React.Component {
                     members.push(id);
                     return {
                         members: members,
-                    }
+                    };
                 });
             }
         }).catch(console.log);

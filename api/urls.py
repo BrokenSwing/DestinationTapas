@@ -4,7 +4,7 @@ from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 from .views import UsersView, FriendsView, WithUserIdTokenProviderView, \
     UserDetailView, ProductsView, PartiesView, PartyDetailView, CommandsView, CommandDetailView, PartyMembersUpdateView, \
-    UserMiscView
+    UserMiscView, ProductDetailView
 
 urlpatterns = {
     path('users/', UsersView.as_view(), name="users"),
@@ -13,7 +13,9 @@ urlpatterns = {
     path('users/<int:pk>/friends/', FriendsView.as_view(), name="friends"),
 
     path('auth/', WithUserIdTokenProviderView.as_view(), name="auth"),
+
     path('products/', ProductsView.as_view(), name="products"),
+    path('products/<int:pk>/', ProductDetailView.as_view(), name="product-detail"),
 
     path('parties/', PartiesView.as_view(), name="parties"),
     path('parties/<int:pk>/', PartyDetailView.as_view(), name="party-detail"),

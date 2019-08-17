@@ -138,6 +138,20 @@ export const fetchAllProducts = async () => {
     };
 };
 
+export const fetchProduct = async (id) => {
+    const result = await get(endpoints.SINGLE_PRODUCT(id));
+    if(result.ok) {
+        const product = await result.json();
+        return {
+            ok: true,
+            product,
+        };
+    }
+    return {
+        ok: false,
+    };
+};
+
 export const fetchAllParties = async (belongsTo) => {
     const result = await get(endpoints.ALL_PARTIES(belongsTo));
     if(result.ok) {
@@ -194,7 +208,7 @@ export const fetchCommand = async (commandId) => {
     };
 };
 
-export const getMembersOfParty = async (partyId) => {
+export const fetchPartyMembers = async (partyId) => {
     const result = await get(endpoints.PARTY_MEMBERS(partyId));
     if(result.ok) {
         const members = await result.json();

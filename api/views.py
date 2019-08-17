@@ -181,6 +181,12 @@ class ProductsView(generics.ListAPIView):
     serializer_class = ProductSerializer
 
 
+class ProductDetailView(generics.RetrieveAPIView):
+
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+
 # Auth #
 
 class WithUserIdTokenProviderView(ObtainAuthToken):

@@ -1,52 +1,47 @@
 import React from "react";
 import PropTypes from "prop-types";
-import ProductsList from "./ProductsList";
-import ProductsCategory from "./ProductsCategory";
 
 export default class ProductItem extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            selected: false,
-        };
-    }
-
-    componentWillUnmount() {
-        if(this.props.list.state.selectedProduct === this) {
-            this.props.list.onProductSelect(this);
-        }
-    }
 
     render() {
         return (
             <li>
-                <a className={this.state.selected ? 'is-active' : ''} onClick={() => this.props.list.onProductSelect(this)}>
+                <a className={this.props.selected ? 'is-active' : ''}
+                   onClick={() => this.props.onSelect(this.props.product.id)}
+                >
                     <div className="columns is-mobile">
-                        <div className="column">
-                            {this.props.name} {this.props.showCommandButton ? ` ~ ${this.props.price}€` : ''}
+                        <div className={`column ${this.props.showCommandButton ? '' : 'is-10'}`}>
+                            {this.props.product.name}
+                            {this.props.showCommandButton ? ` ~ ${this.props.product.price}€` : ''}
                             {
-                                this.state.selected && this.props.ingredients.length > 0 ?
-                                    <div className="columns is-mobile">
-                                        <div className="column is-size-7">
-                                            {this.props.ingredients.reduce((first, second) => `${first.name}, ${second.name}`)}
-                                        </div>
+                                this.props.selected && this.props.product.ingredients.length > 0 &&
+                                <div className="columns is-mobile">
+                                    <div className="column is-size-7">
+                                        {
+                                            this.props.product.ingredients.map(ing => ing.name)
+                                                .reduce((previous, next) => `${previous}, ${next}`)
+                                        }
                                     </div>
-                                : ''
+                                </div>
                             }
                         </div>
                         {
-                            this.props.showCommandButton && this.state.selected ?
+                            this.props.showCommandButton && this.props.selected &&
                             <div className="column">
-                                <button className="button is-primary"
+                                <button className="button is-link"
                                         onClick={(event) => {
-                                            event.preventDefault();
                                             event.stopPropagation();
-                                            console.log(`Start command for ${this.props.name}`)}
-                                        }>
+                                            event.preventDefault();
+                                            this.props.onCommand(this.props.product.id);
+                                        }}
+                                >
                                     Commander
                                 </button>
-                            </div> : <div className="column has-text-right">{this.props.price}€</div>
+                            </div>
+                        }
+                        {
+                            !this.props.showCommandButton &&
+                            <div className="column has-text-right">{this.props.product.price}€</div>
                         }
                     </div>
                 </a>
@@ -56,13 +51,27 @@ export default class ProductItem extends React.Component {
 
 }
 
-ProductsCategory.propTypes = {
+ProductItem.propTypes = {
+    selected: PropTypes.bool,
     showCommandButton: PropTypes.bool,
-    list: PropTypes.instanceOf(ProductsList)
+    onCommand: PropTypes.func,
+    onSelect: PropTypes.func,
+    product: PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        name: PropTypes.string.isRequired,
+        price: PropTypes.number.isRequired,
+        old: PropTypes.bool.isRequired,
+        product_type: PropTypes.oneOf(["SHOT", "FOOD", "COCKTAIL", "OTHER"]).isRequired,
+        ingredients: PropTypes.arrayOf(PropTypes.shape({
+            id: PropTypes.number.isRequired,
+            name: PropTypes.string.isRequired,
+        })).isRequired,
+    }).isRequired,
 };
 
 ProductItem.defaultProps = {
-    ingredients: [],
-    price: 0,
+    selected: false,
     showCommandButton: false,
+    onCommand: () => {},
+    onSelect: () => {},
 };

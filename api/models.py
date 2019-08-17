@@ -75,7 +75,9 @@ class Product(models.Model):
         ("FOOD", "FOOD"),
         ("COCKTAIL", "COCKTAIL"),
         ("SHOT", "SHOT"),
-        ("OTHER", "OTHER")
+        ("BEER", "BEER"),
+        ("SOFT", "SOFT"),
+        ("OTHER", "OTHER"),
     )
 
     name = models.CharField(max_length=30)

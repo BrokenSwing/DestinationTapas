@@ -13,4 +13,5 @@ urlpatterns = [
     path('parties/', index, name="parties"),
     path('parties/<int:pk>/', index, name="party-detail"),
     path('parties/<int:pk>/members', index, name="party-members"),
+    path('parties/<int:pk>/new-command', index, name="new-command"),
 ]
