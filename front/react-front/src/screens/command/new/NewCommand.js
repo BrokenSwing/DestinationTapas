@@ -3,9 +3,9 @@ import NavBar from "../../../components/NavBar";
 import Footer from "../../../components/Footer";
 import {fetchProduct, fetchPartyMembers, createCommandForParty} from "../../../api/api";
 import "aviator";
-import ChooseProduct from "./ChooseProduct";
 import SelectContributions from "./SelectContributions";
 import Icon from "../../../components/Icon";
+import {ProductItem, ProductsCategory, ProductsDisplay, ProductsList} from "../../../components/products";
 
 export default class NewCommand extends React.Component {
 
@@ -15,10 +15,12 @@ export default class NewCommand extends React.Component {
         this.backToProductChoice = this.backToProductChoice.bind(this);
         this.submit = this.submit.bind(this);
         this.setContributions = this.setContributions.bind(this);
+        this.onPriceChange = this.onPriceChange.bind(this);
         this.state = {
             commandProduct: null,
             partyMembers: [],
-            commandPrice: 0,
+            productPrice: 0,
+            priceFieldValue: 0,
             contributions: [],
         };
     }
@@ -34,13 +36,32 @@ export default class NewCommand extends React.Component {
         }).catch(console.log);
     }
 
+    onPriceChange(e) {
+        let fieldValue = e.target.value;
+        let newValue = Number(fieldValue);
+        if (!isNaN(newValue) && newValue >= 0) {
+            if(fieldValue.length === 0) {
+                newValue = this.state.commandProduct.price;
+            } else if (Math.floor(newValue * 100) !== newValue * 100) {
+                newValue = Math.floor(newValue * 100) / 100;
+                fieldValue = newValue;
+            }
+
+            this.setState({
+                productPrice: newValue,
+                priceFieldValue: fieldValue,
+            });
+        }
+    }
+
     onCommand(id) {
         if (id >= 0) {
             fetchProduct(id).then(result => {
                 if (result.ok) {
                     this.setState({
                         commandProduct: result.product,
-                        commandPrice: result.product.price,
+                        productPrice: result.product.price,
+                        priceFieldValue: result.product.price,
                     });
                 }
             }).catch(console.log);
@@ -92,13 +113,43 @@ export default class NewCommand extends React.Component {
                             <Icon iconName="arrow-left" iconClasses="is-small"/><span>Retour</span>
                         </a>
                         <h1 className="title">Nouvelle commande</h1>
-                        {!this.state.commandProduct && <ChooseProduct onCommand={this.onCommand}/>}
+                        <h2 className="subtitle is-size-5">1. Sélectionnez ce que vous voulez commander</h2>
+                        {
+                            !this.state.commandProduct &&
+                                <ProductsDisplay showCommandButton={true} onCommand={this.onCommand}/>
+                        }
                         {
                             this.state.commandProduct &&
                             <>
+                                <ProductsList>
+                                    <ProductsCategory name="Choisis">
+                                        <ProductItem product={{...this.state.commandProduct, price: this.state.productPrice}}
+                                                     selected={true}
+                                                     onSelect={this.backToProductChoice}
+                                        />
+                                    </ProductsCategory>
+                                </ProductsList>
+
+                                <h2 className="subtitle is-size-5">2. Changez le prix si celui-ci n'est pas valide</h2>
+
+                                <div className="field has-addons">
+                                    <div className="control">
+                                        <input className="input has-text-right"
+                                               name="price"
+                                               type="text"
+                                               placeholder={this.state.commandProduct.price}
+                                               value={this.state.priceFieldValue}
+                                               onChange={this.onPriceChange}
+                                        />
+                                    </div>
+                                    <p className="control">
+                                        <a className="button is-static">€</a>
+                                    </p>
+                                </div>
+
                                 <SelectContributions product={this.state.commandProduct}
+                                                     price={this.state.productPrice}
                                                      partyMembers={this.state.partyMembers}
-                                                     back={this.backToProductChoice}
                                                      submitContributions={this.setContributions}
                                 />
 

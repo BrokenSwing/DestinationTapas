@@ -3,23 +3,28 @@ import PropTypes from "prop-types";
 import {Selectable, Selector, SelectorData} from "../../../components/selector";
 import UserName from "../../../components/UserName";
 import {ProductType} from "../../../api/types";
-import {ProductsList, ProductItem, ProductsCategory} from "../../../components/products";
 
 export default class SelectContributions extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            participants: [],
-            productPrice: this.props.product.price,
-            priceFieldValue: this.props.product.price,
-            pricePerUser: {},
-        };
+
         this.addParticipant = this.addParticipant.bind(this);
         this.removeParticipant = this.removeParticipant.bind(this);
         this.calculatePrices = this.calculatePrices.bind(this);
-        this.onPriceChange = this.onPriceChange.bind(this);
         this.submit = this.submit.bind(this);
+        this.calculatePricesFrom = this.calculatePricesFrom.bind(this);
+
+        this.state = {
+            participants: [],
+            pricePerUser: {},
+        };
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if(prevProps.price !== this.props.price) {
+            this.calculatePrices();
+        }
     }
 
     submit() {
@@ -57,86 +62,42 @@ export default class SelectContributions extends React.Component {
         this.submit();
     }
 
-    calculatePrices() {
-        this.setState((state, props) => {
-            const membersCount = state.participants.length;
+    calculatePricesFrom(state, props) {
+        const membersCount = state.participants.length;
 
-            if (membersCount === 0) {
-                return {
-                    pricePerUser: {},
-                };
-            }
-
-            let prices = {};
-            let totalPrice = state.productPrice;
-            const pricePerUser = Math.floor(totalPrice / membersCount * 100) / 100;
-            state.participants.forEach((pId, i) => {
-                let price;
-                if (i < membersCount - 1) {
-                    price = pricePerUser;
-                } else {
-                    price = totalPrice;
-                }
-                // Seems to be necessary to fix floating point rounding issue due to previous subs
-                price = Math.round(price * 100) / 100;
-                totalPrice -= price;
-                prices[pId] = price;
-            });
+        if (membersCount === 0) {
             return {
-                pricePerUser: prices,
+                pricePerUser: {},
             };
+        }
+
+        let prices = {};
+        let totalPrice = props.price;
+        const pricePerUser = Math.floor(totalPrice / membersCount * 100) / 100;
+        state.participants.forEach((pId, i) => {
+            let price;
+            if (i < membersCount - 1) {
+                price = pricePerUser;
+            } else {
+                price = totalPrice;
+            }
+            // Seems to be necessary to fix floating point rounding issue due to previous subs
+            price = Math.round(price * 100) / 100;
+            totalPrice -= price;
+            prices[pId] = price;
         });
+        return {
+            pricePerUser: prices,
+        };
     }
 
-    onPriceChange(e) {
-        let fieldValue = e.target.value;
-        let newValue = Number(fieldValue);
-        if(!isNaN(newValue) && newValue >= 0) {
-            if(Math.floor(newValue * 100) !== newValue * 100) {
-                newValue = Math.floor(newValue * 100) / 100;
-                fieldValue = newValue;
-            }
-
-            this.setState({
-                productPrice: newValue,
-                priceFieldValue: fieldValue,
-            });
-            this.calculatePrices();
-            this.submit();
-        }
+    calculatePrices() {
+        this.setState((state, props) => this.calculatePricesFrom(state, props));
     }
 
     render() {
         return (
             <>
-                <h2 className="subtitle is-size-5">1. Sélectionnez ce que vous voulez commander</h2>
-
-                <ProductsList>
-                    <ProductsCategory name="Choisis">
-                        <ProductItem product={{...this.props.product, price: this.state.productPrice}}
-                                     selected={true}
-                                     onSelect={this.props.back}
-                        />
-                    </ProductsCategory>
-                </ProductsList>
-
-                <h2 className="subtitle is-size-5">2. Changez le prix si celui-ci n'est pas valide</h2>
-
-                <div className="field has-addons">
-                    <div className="control">
-                        <input className="input has-text-right"
-                               name="price"
-                               type="text"
-                               placeholder={this.props.product.price}
-                               value={this.state.priceFieldValue}
-                               onChange={this.onPriceChange}
-                        />
-                    </div>
-                    <p className="control">
-                        <a className="button is-static">€</a>
-                    </p>
-                </div>
-
                 <h2 className="subtitle is-size-5">
                     3. Sélectionnez les membres participants à cette commande
                 </h2>
@@ -170,8 +131,8 @@ export default class SelectContributions extends React.Component {
 }
 
 SelectContributions.propTypes = {
-    partyMembers: PropTypes.arrayOf(PropTypes.number).isRequired,
     product: ProductType.isRequired,
-    back: PropTypes.func.isRequired,
+    price: PropTypes.number.isRequired,
+    partyMembers: PropTypes.arrayOf(PropTypes.number).isRequired,
     submitContributions: PropTypes.func.isRequired,
 };
