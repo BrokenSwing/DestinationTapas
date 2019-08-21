@@ -1,8 +1,8 @@
 import React from "react";
 import Icon from "./Icon";
 import "aviator";
-import { withCookies } from "react-cookie";
-import { isConnected } from "../routing";
+import {withCookies} from "react-cookie";
+import {isConnected} from "../routing";
 
 class NavBar extends React.Component {
 
@@ -30,14 +30,13 @@ class NavBar extends React.Component {
                 <div className="container">
                     <div className="navbar-brand">
                         <a className="navbar-item navigate" href={Aviator.hrefFor("/")}>
-                            <h1>
-                                Destination Tapas
-                            </h1>
+                            <h1>Destination Tapas</h1>
                         </a>
-                        <div className="navbar-burger" ref={this.burger} aria-label="menu" aria-expanded="false" onClick={this.onBurgerClick}>
-                            <span aria-expanded="true" />
-                            <span aria-expanded="true" />
-                            <span aria-expanded="true" />
+                        <div className="navbar-burger" ref={this.burger} aria-label="menu" aria-expanded="false"
+                             onClick={this.onBurgerClick}>
+                            <span aria-expanded="true"/>
+                            <span aria-expanded="true"/>
+                            <span aria-expanded="true"/>
                         </div>
                     </div>
                     <div className="navbar-menu" ref={this.menu}>
@@ -45,23 +44,30 @@ class NavBar extends React.Component {
                             {
                                 isConnected() ?
                                     <>
-                                        <a className="navbar-item navigate" href={Aviator.hrefFor("/profile")}>
-                                            <Icon iconName="user" />
+                                        <a className={`navbar-item navigate ${Aviator.getCurrentURI() === "/profile/" ? "is-active" : ""}`}
+                                           href={Aviator.hrefFor("/profile/")}
+                                        >
+                                            <Icon iconName="user"/>
                                             <span>Profil</span>
                                         </a>
-                                        <a className="navbar-item navigate" href={Aviator.hrefFor("/friends")}>
+                                        <a className={`navbar-item navigate ${Aviator.getCurrentURI() === "/friends/" ? "is-active" : ""}`}
+                                           href={Aviator.hrefFor("/friends/")}
+                                        >
                                             <Icon iconName="address-book"/>
                                             <span>Amis</span>
                                         </a>
-                                        <a className="navbar-item navigate" href={Aviator.hrefFor("/parties")}>
-                                            <Icon iconName="glass-cheers" />
+                                        <a className={`navbar-item navigate ${Aviator.getCurrentURI().startsWith("/parties/") ? "is-active" : ""}`}
+                                           href={Aviator.hrefFor("/parties/")}
+                                        >
+                                            <Icon iconName="glass-cheers"/>
                                             <span>Soirée</span>
                                         </a>
                                     </>
                                     : ''
                             }
-                            <a className="navbar-item navigate" href={Aviator.hrefFor("/products")}>
-                                <Icon iconName="pizza-slice" />
+                            <a className={`navbar-item navigate ${Aviator.getCurrentURI() === "/products/" ? "is-active" : ""}`}
+                               href={Aviator.hrefFor("/products/")}>
+                                <Icon iconName="pizza-slice"/>
                                 <span>Carte</span>
                             </a>
                         </div>
@@ -69,12 +75,12 @@ class NavBar extends React.Component {
                             {
                                 isConnected() ?
                                     <a className="navbar-item" onClick={this.triggerDisconnection}>
-                                        <Icon iconName="sign-out-alt" />
+                                        <Icon iconName="sign-out-alt"/>
                                         <span>Se déconnecter</span>
                                     </a>
                                     :
-                                    <a className="navbar-item navigate" href={Aviator.hrefFor("/auth")}>
-                                        <Icon iconName="sign-in-alt" />
+                                    <a className="navbar-item navigate" href={Aviator.hrefFor("/auth/")}>
+                                        <Icon iconName="sign-in-alt"/>
                                         <span>Se connecter</span>
                                     </a>
                             }

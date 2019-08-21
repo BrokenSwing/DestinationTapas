@@ -6,9 +6,10 @@ import Products from "./screens/products/Products";
 import Parties from "./screens/party/Parties";
 import PartyDetails from "./screens/party/details/PartyDetails";
 import MembersUpdate from "./screens/party/members/MembersUpdate";
-import NewCommand from "./screens/command/NewCommand";
+import NewCommand from "./screens/command/new/NewCommand";
 import Profile from "./screens/profile/Profile";
 import Friends from "./screens/friends/Friends";
+import CommandDisplay from "./screens/command/detail/CommandDisplay";
 import 'aviator'
 import {requiresAuth, renderLater, render, isConnected} from "./routing";
 
@@ -32,7 +33,10 @@ Aviator.setRoutes({
             "/": requiresAuth(renderLater(<PartyDetails />)),
             "/members": requiresAuth(renderLater(<MembersUpdate />)),
             "/new-command": requiresAuth(renderLater(<NewCommand />)),
-        }
+            "/commands": {
+                "/:command": requiresAuth(renderLater(<CommandDisplay />)),
+            },
+        },
     },
     '/profile': requiresAuth(renderLater(<Profile />)),
     '/friends': requiresAuth(renderLater(<Friends />)),

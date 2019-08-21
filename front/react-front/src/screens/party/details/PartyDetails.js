@@ -6,6 +6,7 @@ import "aviator";
 import {fetchCommand, fetchParty} from "../../../api/api";
 import UserName from "../../../components/UserName";
 import { Modal, ModalCardFoot, ModalCard, ModalCardBody, ModalCardHead } from "../../../components/modals";
+import ProductName from "../../../components/ProductName";
 
 export default class PartyDetails extends React.Component {
 
@@ -62,7 +63,15 @@ export default class PartyDetails extends React.Component {
                         <h2 className="subtitle">Commandes :</h2>
 
                         {this.state.party.commands.map(commandId => (
-                            <Command key={commandId} commandId={commandId} />
+                            <Command key={commandId}
+                                     commandId={commandId}
+                                     onClick={() => Aviator.navigate("/parties/:id/commands/:command/", {
+                                         namedParams: {
+                                             id: this.partyId,
+                                             command: commandId,
+                                         },
+                                     })}
+                            />
                         ))}
 
                         {
@@ -97,24 +106,23 @@ class Command extends React.Component {
                     command: result.command,
                 });
             }
-        }).catch(err => {
-            console.log(err);
-        })
+        }).catch(console.log);
     }
 
     render() {
         if(this.state.command === null) {
             return null;
         }
+        const {commandId, ...props} = this.props;
         return (
-            <div className="box">
+            <div className="box" {...props}>
                 <div className="columns is-mobile">
                     <div className="column">
-                        <strong>{this.state.command.product.name}</strong>
+                        <strong><ProductName productId={this.state.command.product} /></strong>
                     </div>
                     <div className="column has-text-right">
                         Prix : {this.state.command.total_price}€ <br/>
-                        {this.state.command.contributions.length}
+                        {this.state.command.participants.length}
                         <Icon iconName="user"/>
                     </div>
                 </div>
@@ -150,7 +158,8 @@ class PartyRecap extends React.Component {
         if(!this.props.party) {
             return null;
         }
-        const cantModify = this.props.party.status === "FINISHED" || !this.props.party.members.includes(localStorage.getItem("userId"));
+        let cantModify = this.props.party.status === "FINISHED" || !this.props.party.members.includes(localStorage.getItem("userId"));
+        cantModify = cantModify ? undefined : true;
         return (
         <>
            <div className="field has-text-centered">

@@ -9,24 +9,22 @@ from rest_framework.response import Response
 from rest_framework import status
 from .permissions import IsMemberOfParty, IsOwner
 from django.db import models
+from django.shortcuts import get_object_or_404
 
 
 # Users #
 
 class UsersView(generics.ListCreateAPIView):
-
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
 class UserDetailView(generics.RetrieveAPIView):
-
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
 class UserMiscView(generics.RetrieveAPIView):
-
     queryset = User.objects.all()
     serializer_class = UserMiscSerializer
 
@@ -38,7 +36,6 @@ class UserMiscView(generics.RetrieveAPIView):
 # Friend requests #
 
 class FriendsView(generics.RetrieveAPIView):
-
     queryset = User.objects.all()
     serializer_class = FriendOperationSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwner]
@@ -176,13 +173,11 @@ class FriendsView(generics.RetrieveAPIView):
 # Products #
 
 class ProductsView(generics.ListAPIView):
-
     queryset = Product.objects.filter(old=False)
     serializer_class = ProductSerializer
 
 
 class ProductDetailView(generics.RetrieveAPIView):
-
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
@@ -205,7 +200,6 @@ class WithUserIdTokenProviderView(ObtainAuthToken):
 # Parties #
 
 class PartiesView(generics.ListCreateAPIView):
-
     queryset = Party.objects.all()
     serializer_class = PartySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -227,13 +221,11 @@ class PartiesView(generics.ListCreateAPIView):
 
 
 class PartyDetailView(generics.RetrieveAPIView):
-
     queryset = Party.objects.all()
     serializer_class = PartySerializer
 
 
 class PartyMembersUpdateView(generics.GenericAPIView):
-
     queryset = Party.objects.all()
     serializer_class = MemberOperationSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsMemberOfParty]
@@ -261,7 +253,7 @@ class PartyMembersUpdateView(generics.GenericAPIView):
         members = queryset.members.all()
 
         if serializer.data['action'] == "REMOVE":
-            total_to_pay = CommandContribution.objects.filter(user=to_update).filter(command__party=queryset)\
+            total_to_pay = CommandContribution.objects.filter(user=to_update).filter(command__party=queryset) \
                 .aggregate(models.Sum("part"))["part__sum"]
 
             if total_to_pay is not None:
@@ -306,12 +298,54 @@ class PartyMembersUpdateView(generics.GenericAPIView):
 # Commands
 
 class CommandsView(generics.ListAPIView):
-
     queryset = Command.objects.all()
     serializer_class = CommandSerializer
 
 
-class CommandDetailView(generics.RetrieveAPIView):
-
+class CommandDetailView(generics.RetrieveUpdateAPIView):
     queryset = Command.objects.all()
     serializer_class = CommandSerializer
+
+
+class PartyCommandsView(generics.RetrieveAPIView):
+    queryset = Party
+    serializer_class = CommandSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsMemberOfParty]
+
+    def get(self, request, *args, **kwargs):
+        party = self.get_object()
+        serializer = self.get_serializer([x for x in party.commands.all()], many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        party = self.get_object()
+
+        if party.status == "FINISHED":
+            return Response({"detail": "You can't add a command when the party is finished"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        contributions = [self.create_contribution(c) for c in serializer.data["contributions"]]
+        command = Command(
+            author=request.user,
+            product=get_object_or_404(Product, id=serializer.data["product"]),
+        )
+        command.save()
+        for c in contributions:
+            c.command = command
+            c.save()
+        party.commands.add(command)
+        party.save()
+        serializer = self.get_serializer(command)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @staticmethod
+    def create_contribution(contribution_data):
+        data = {
+            "product": get_object_or_404(Product, id=contribution_data["product"]),
+            "user": None if contribution_data["user"] is None else get_object_or_404(User, id=contribution_data["user"]),
+            "part": contribution_data["part"],
+        }
+        return CommandContribution(**data)

@@ -11,7 +11,7 @@ class UserMisc(models.Model):
 
     @property
     def friends(self):
-        result = FriendRequest.objects.filter(models.Q(from_user=self.user) | models.Q(to_user=self.user))\
+        result = FriendRequest.objects.filter(models.Q(from_user=self.user) | models.Q(to_user=self.user)) \
             .filter(status="ACCEPTED").all()
         friends = []
         for request in result:
@@ -90,10 +90,6 @@ class Product(models.Model):
         return "{} : {}€ {}".format(self.name, self.price, "(old)" if self.old else "")
 
 
-class Shot(Product):
-    pass
-
-
 class Command(models.Model):
     """
     Represents a command, a command is just one product ordered, at a specified time by a party.
@@ -101,34 +97,40 @@ class Command(models.Model):
 
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="command_author")
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    contributions = models.ManyToManyField(User, through='CommandContribution')
     date = models.DateTimeField(auto_now_add=True)
 
     @property
     def total_price(self):
         """Return the total price for the command"""
-        return CommandContribution.objects.filter(command=self).aggregate(models.Sum('part'))['part__sum']
+        total = self.contributions.aggregate(models.Sum('part'))['part__sum']
+        return total if total is not None else 0
+
+    @property
+    def participants(self):
+        participants = []
+        for contrib in self.contributions.all():
+            if contrib.user_id not in participants and contrib.user_id is not None:
+                participants.append(contrib.user_id)
+        return participants
+
+    @property
+    def is_complete(self):
+        return self.contributions.filter(user=None).count() == 0 and self.contributions.count() > 0
 
     def __str__(self):
-        return "Command n°{} from {} ({} contributions)".format(self.id, self.author.username,
-                                                                self.contributions.count())
-
-
-class ShotTrayCommand(Command):
-    """
-    Represents a shot tray that is composed with 14 shooters
-    """
-    shots = models.ManyToManyField(Product)
+        return "Command n°{} by {} ({} contributions)".format(
+            self.id, self.author.username, self.contributions.count())
 
 
 class CommandContribution(models.Model):
-    command = models.ForeignKey(Command, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    command = models.ForeignKey(Command, on_delete=models.CASCADE, related_name="contributions")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     part = models.FloatField()
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
     def __str__(self):
-        return "Contribution from {} to command n°{} with {}€".format(self.user.username, self.command.id, self.part)
+        return "Contribution from {} to command n°{} with {}€".format(
+            self.user.username if self.user is not None else "?", self.command.id, self.part)
 
 
 class Party(models.Model):
@@ -149,8 +151,8 @@ class Party(models.Model):
     commands = models.ManyToManyField(Command, blank=True)
 
     def __str__(self):
-        return "Party n°{} of {} with {} members, state : {}".format(self.id, self.date.strftime("%a %d %b %Y at %X"),
-                                                                     self.members.count(), self.status)
+        return "Party n°{} of {} with {} members, state : {}".format(
+            self.id, self.date.strftime("%a %d %b %Y at %X"), self.members.count(), self.status)
 
     @property
     def total_price(self):

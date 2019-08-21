@@ -70,6 +70,8 @@ export default class ProductsDisplay extends React.Component {
             "SHOT": [],
             "COCKTAIL": [],
             "FOOD": [],
+            "BEER": [],
+            "SOFT": [],
             "OTHER": [],
         };
 
@@ -107,6 +109,7 @@ export default class ProductsDisplay extends React.Component {
                                                  onCommand={this.props.onCommand}
                                                  onSelect={this.onProductSelection}
                                                  selected={this.state.selected === product.id}
+                                                 showCommandButton={this.props.showCommandButton}
                                     />
                                 ))
                             }

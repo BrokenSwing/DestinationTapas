@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import {ProductType} from "../../api/types";
 
 export default class ProductItem extends React.Component {
 
@@ -9,41 +10,33 @@ export default class ProductItem extends React.Component {
                 <a className={this.props.selected ? 'is-active' : ''}
                    onClick={() => this.props.onSelect(this.props.product.id)}
                 >
-                    <div className="columns is-mobile">
-                        <div className={`column ${this.props.showCommandButton ? '' : 'is-10'}`}>
+                    <div className="columns is-gapless is-multiline">
+                        <div className="column is-12">
                             {this.props.product.name}
-                            {this.props.showCommandButton ? ` ~ ${this.props.product.price}€` : ''}
-                            {
-                                this.props.selected && this.props.product.ingredients.length > 0 &&
-                                <div className="columns is-mobile">
-                                    <div className="column is-size-7">
-                                        {
-                                            this.props.product.ingredients.map(ing => ing.name)
-                                                .reduce((previous, next) => `${previous}, ${next}`)
-                                        }
-                                    </div>
-                                </div>
-                            }
+                            <span className="has-text-right" style={{float: "right"}}>{this.props.product.price}€</span>
                         </div>
                         {
-                            this.props.showCommandButton && this.props.selected &&
-                            <div className="column">
-                                <button className="button is-link"
-                                        onClick={(event) => {
-                                            event.stopPropagation();
-                                            event.preventDefault();
-                                            this.props.onCommand(this.props.product.id);
-                                        }}
-                                >
-                                    Commander
-                                </button>
+                            this.props.selected && this.props.product.ingredients.length > 0 &&
+                            <div className="column is-size-7">
+                                {
+                                    this.props.product.ingredients.map(ing => ing.name)
+                                        .reduce((previous, next) => `${previous}, ${next}`)
+                                }
                             </div>
                         }
-                        {
-                            !this.props.showCommandButton &&
-                            <div className="column has-text-right">{this.props.product.price}€</div>
-                        }
                     </div>
+                    {
+                        this.props.showCommandButton && this.props.selected &&
+                        <button className="button is-link"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    event.preventDefault();
+                                    this.props.onCommand(this.props.product.id);
+                                }}
+                        >
+                            Commander
+                        </button>
+                    }
                 </a>
             </li>
         );
@@ -56,22 +49,14 @@ ProductItem.propTypes = {
     showCommandButton: PropTypes.bool,
     onCommand: PropTypes.func,
     onSelect: PropTypes.func,
-    product: PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        name: PropTypes.string.isRequired,
-        price: PropTypes.number.isRequired,
-        old: PropTypes.bool.isRequired,
-        product_type: PropTypes.oneOf(["SHOT", "FOOD", "COCKTAIL", "OTHER"]).isRequired,
-        ingredients: PropTypes.arrayOf(PropTypes.shape({
-            id: PropTypes.number.isRequired,
-            name: PropTypes.string.isRequired,
-        })).isRequired,
-    }).isRequired,
+    product: ProductType.isRequired,
 };
 
 ProductItem.defaultProps = {
     selected: false,
     showCommandButton: false,
-    onCommand: () => {},
-    onSelect: () => {},
+    onCommand: () => {
+    },
+    onSelect: () => {
+    },
 };

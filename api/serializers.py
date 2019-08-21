@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import FriendRequest, Product, Party, Command, UserMisc
+from .models import Product, Party, Command, UserMisc, CommandContribution
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -31,14 +31,6 @@ class PartySerializer(serializers.ModelSerializer):
                             "end_date"]
 
 
-class CommandSerializer(serializers.ModelSerializer):
-    product = ProductSerializer()
-
-    class Meta:
-        model = Command
-        fields = ["author", "product", "contributions", "date", "total_price"]
-
-
 class MemberOperationSerializer(serializers.Serializer):
     action = serializers.ChoiceField(choices=["ADD", "REMOVE"])
     user = serializers.IntegerField()
@@ -51,7 +43,6 @@ class UserMiscSerializer(serializers.ModelSerializer):
 
 
 class UserFriendsSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = UserMisc
         fields = ["received_requests", "friends", "sent_requests"]
@@ -60,3 +51,19 @@ class UserFriendsSerializer(serializers.ModelSerializer):
 class FriendOperationSerializer(serializers.Serializer):
     action = serializers.ChoiceField(choices=['ACCEPT', 'REFUSE', 'CANCEL', 'REMOVE', 'ADD'])
     user = serializers.IntegerField()
+
+
+class ContributionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommandContribution
+        fields = ["id", "user", "part", "product"]
+        read_ony_fields = ["id"]
+
+
+class CommandSerializer(serializers.ModelSerializer):
+    contributions = ContributionSerializer(many=True)
+
+    class Meta:
+        model = Command
+        fields = ["id", "author", "product", "date", "total_price", "participants", "contributions", "is_complete"]
+        read_only_fields = ["id", "author", "date", "total_price", "participants", "is_complete"]

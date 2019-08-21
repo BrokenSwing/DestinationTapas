@@ -4,7 +4,7 @@ import Footer from "../../../components/Footer";
 import Icon from "../../../components/Icon";
 import { fetchParty, fetchUserFriends, addMemberToParty, removeMemberFromParty } from "../../../api/api";
 import "aviator";
-import { Selector, Selectable } from "../../../components/selector";
+import { Selector, Selectable, SelectorData } from "../../../components/selector";
 import UserName from "../../../components/UserName";
 
 export default class MembersUpdate extends React.Component {
@@ -137,7 +137,7 @@ export default class MembersUpdate extends React.Component {
                                             onDeselect={() => this.removeMember(id)}
                                             locked={this.state.unmodifiable.includes(id) || this.state.party && this.state.party.status === "FINISHED"}
                                 >
-                                    <UserName userId={id} />
+                                    <SelectorData><UserName userId={id} /></SelectorData>
                                 </Selectable>
                             ))}
                         </Selector>

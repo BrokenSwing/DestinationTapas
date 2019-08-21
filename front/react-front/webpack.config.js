@@ -1,7 +1,13 @@
 const path = require("path");
+const TerserJSPlugin = require('terser-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 module.exports = {
     entry: "./src/index.js",
+    optimization: {
+        minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
+    },
     output: {
         filename: "main.js",
         path: path.resolve(__dirname, "../static/js")
@@ -11,23 +17,25 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
-                use: { loader: "babel-loader" }
+                use: {loader: "babel-loader"},
             },
             {
                 test: /\.css$/i,
-                use: ['style-loader']
+                use: ['style-loader'],
             },
             {
                 test: /\.css$/i,
-                loader: 'css-loader'
+                loader: 'css-loader',
             },
             {
                 test: /\.sass$/i,
                 use: [
-                    "style-loader",
+                    {
+                        loader: MiniCssExtractPlugin.loader,
+                    },
                     "css-loader",
                     "sass-loader"
-                ]
+                ],
             },
             {
                 test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/,
@@ -37,5 +45,11 @@ module.exports = {
                 },
             },
         ]
-    }
+    },
+    plugins: [
+        new MiniCssExtractPlugin({
+            filename: '[name].css',
+            chunkFilename: '[id].css',
+        }),
+    ]
 };

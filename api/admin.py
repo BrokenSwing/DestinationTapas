@@ -6,7 +6,6 @@ from .models import *
 admin.site.register([
     Party,
     Product,
-    Shot,
     Command,
     FriendRequest,
     Ingredient,

@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Icon from "../Icon";
+import SelectorData from "./SelectorData";
 
 export default class Selectable extends React.Component {
 
@@ -20,14 +21,14 @@ export default class Selectable extends React.Component {
     render() {
         return (
             <tr className={this.props.selected ? "is-selected": ""} onClick={this.onUserClick}>
-                <td className="has-text-centered">{this.props.children}</td>
-                <td className="has-text-centered">
+                {this.props.children}
+                <SelectorData>
                     {
-                        this.props.locked ? <Icon iconName="lock" /> :
-                            this.props.selected ? <Icon iconName="check-square" /> :
-                                <span className="icon" />
+                        this.props.locked ? <Icon iconName="lock"/> :
+                            this.props.selected ? <Icon iconName="check-square"/> :
+                                <span className="icon"/>
                     }
-                </td>
+                </SelectorData>
             </tr>
         );
     }
