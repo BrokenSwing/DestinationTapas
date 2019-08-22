@@ -2,107 +2,314 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css"/>
     <script defer src="https://use.fontawesome.com/releases/v5.10.1/js/all.js"></script>
 
     <title>Test</title>
 </head>
 <body>
-    <div id="root">
-        <nav class="navbar has-shadow is-spaced">
-            <div class="container">
-                <div class="navbar-brand">
-                    <h1 class="navbar-item">
-                        Destination Tapas
-                    </h1>
-                    <div class="navbar-burger" aria-label="menu" aria-expanded="false">
-                        <span aria-expanded="true"></span>
-                        <span aria-expanded="true"></span>
-                        <span aria-expanded="true"></span>
-                    </div>
+<div id="root">
+    <nav class="navbar has-shadow is-spaced">
+        <div class="container">
+            <div class="navbar-brand">
+                <h1 class="navbar-item">
+                    Destination Tapas
+                </h1>
+                <div class="navbar-burger" aria-label="menu" aria-expanded="false">
+                    <span aria-expanded="true"></span>
+                    <span aria-expanded="true"></span>
+                    <span aria-expanded="true"></span>
                 </div>
-                <div class="navbar-menu">
-                    <div class="navbar-start">
-                        <a class="navbar-item">
+            </div>
+            <div class="navbar-menu">
+                <div class="navbar-start">
+                    <a class="navbar-item">
                             <span class="icon">
                                 <i class="fas fa-user"></i>
                             </span>
-                            <span>Profil</span>
-                        </a>
-                        <a class="navbar-item">
+                        <span>Profil</span>
+                    </a>
+                    <a class="navbar-item">
                             <span class="icon">
                                 <i class="fas fa-glass-cheers"></i>
                             </span>
-                            <span>Soirée</span>
-                        </a>
-                        <a class="navbar-item">
+                        <span>Soirée</span>
+                    </a>
+                    <a class="navbar-item">
                             <span class="icon">
                                 <i class="fas fa-address-book"></i>
                             </span>
-                            <span>Amis</span>
-                        </a>
-                        <a class="navbar-item">
+                        <span>Amis</span>
+                    </a>
+                    <a class="navbar-item">
                             <span class="icon">
                                 <i class="fas fa-pizza-slice"></i>
                             </span>
-                            <span>Carte</span>
-                        </a>
-                    </div>
-                    <div class="navbar-end">
-                        <a class="navbar-item">
+                        <span>Carte</span>
+                    </a>
+                </div>
+                <div class="navbar-end">
+                    <a class="navbar-item">
                             <span class="icon">
                                 <i class="fas fa-sign-out-alt"></i>
                             </span>
-                            <span>Se déconnecter</span>
-                        </a>
-                    </div>
+                        <span>Se déconnecter</span>
+                    </a>
                 </div>
             </div>
-        </nav>
+        </div>
+    </nav>
 
-        <section class="section">
-            <div class="container">
-                <table class="table is-striped is-fullwidth">
-                    <tbody>
-                        <tr class="is-selected">
-                            <td class="has-text-centered">Florent</td>
-                            <td class="has-text-centered">
-                                <span class="icon">
-                                    <i class="fas fa-check-square"></i>
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="has-text-centered">Jean</td>
-                            <td class="has-text-centered"></td>
-                        </tr>
-                        <tr>
-                            <td class="has-text-centered">Marc</td>
-                            <td class="has-text-centered"></td>
-                        </tr>
-                        <tr>
-                            <td class="has-text-centered">Rose</td>
-                            <td class="has-text-centered"></td>
-                        </tr>
-                        <tr>
-                            <td class="has-text-centered">Katia</td>
-                            <td class="has-text-centered"></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+    <section class="section">
+        <div class="container">
 
-        <footer class="footer">
-            <div class="content has-text-centered">
-                <p>
-                    <strong>Destination Tapas</strong> par <strong>Florent HUGOUVIEUX</strong>.
-                    Le code source est sous la licence <a href={"https://www.apache.org/licenses/LICENSE-2.0.html"}>Apache 2</a>.
-                </p>
+            <h1 class="title is-4 has-text-centered">Commande du plateau</h1>
+
+            <table class="table is-striped is-fullwidth">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Shooter</th>
+                    <th>Commanditaire</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Kamikaze</td>
+                    <td>Simon</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Kamikaze</td>
+                    <td>Florent</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Jaeger bomb</td>
+                    <td>Simon</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Jaeger bomb</td>
+                    <td>Simon</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Jaeger bomb</td>
+                    <td>Simon</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Jaeger bomb</td>
+                    <td>Florent</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Ma cherry</td>
+                    <td>Florent</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>Nesquik</td>
+                    <td>Florent</td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>Jaeger bomb</td>
+                    <td>Matis</td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td>Jaeger bomb</td>
+                    <td>Matis</td>
+                </tr>
+                <tr>
+                    <td>11</td>
+                    <td>Jaeger bomb</td>
+                    <td>Autre</td>
+                </tr>
+                <tr>
+                    <td>12</td>
+                </tr>
+                <tr>
+                    <td>13</td>
+                </tr>
+                <tr>
+                    <td>14</td>
+                </tr>
+
+                </tbody>
+            </table>
+
+            <br/>
+
+            <div class="field has-addonsd">
+                <div class="control has-icons-left has-text-centered">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    <input class="input" type="text" placeholder="Recherche">
+                </div>
             </div>
-        </footer>
-    </div>
+
+            <table class="table is-striped is-fullwidth">
+                <tbody>
+                <tr>
+                    <td>
+                        <div class="columns is-mobile">
+                            <div class="column">
+                                <strong>Jaegger bomb</strong>
+                                <div class="columns is-mobile">
+                                    <div class="column">
+                                        Jaegermeister,crazy tiger
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column has-text-right">
+                                <button class="button is-link">Commander</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="columns is-mobile">
+                            <div class="column">
+                                <strong>Kamikaze</strong>
+                                <div class="columns is-mobile">
+                                    <div class="column">
+                                        Vodka, citron, et autre flagornerie
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column has-text-right">
+                                <button class="button is-link">Commander</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="columns is-mobile">
+                            <div class="column">
+                                <strong>Kalash</strong>
+                                <div class="columns is-mobile">
+                                    <div class="column">
+                                        Alcoooool
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column has-text-right">
+                                <button class="button is-link">Commander</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="columns is-mobile">
+                            <div class="column">
+                                <strong>Issou</strong>
+                                <div class="columns is-mobile">
+                                    <div class="column">
+                                        Rhum pimenté, tabasco, liqueur 41
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column has-text-right">
+                                <button class="button is-link">Commander</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+
+            <div class="modal">
+                <div class="modal-background"></div>
+                <div class="modal-card">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title">Commande</p>
+                        <button class="delete" aria-label="close"></button>
+                    </header>
+
+
+                    <section class="modal-card-body">
+                        <p>
+                            <strong>Jaegger bomb</strong>
+                            <br/>
+                            Jaegermeister,crazy tiger
+                        </p>
+
+                        <br/>
+
+                        <div class="columns is-mobile">
+                            <div class="column">
+                                <div class="control">
+                                    <div class="select">
+                                        <select>
+                                            <option>Quantité</option>
+                                            <option>1</option>
+                                            <option>2</option>
+                                            <option>3</option>
+                                            <option>4</option>
+                                            <option>5</option>
+                                            <option>6</option>
+                                            <option>7</option>
+                                            <option>8</option>
+                                            <option>9</option>
+                                            <option>10</option>
+                                            <option>11</option>
+                                            <option>12</option>
+                                            <option>13</option>
+                                            <option>14</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="control">
+                                    <div class="select">
+                                        <select>
+                                            <option>Commanditaire</option>
+                                            <option>Simon</option>
+                                            <option>Tim</option>
+                                            <option>Florent</option>
+                                            <option>Thomas</option>
+                                            <option>Hugo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <footer class="modal-card-foot">
+                        <button class="button is-success">Confirmer</button>
+                        <button class="button">Annuler</button>
+                    </footer>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+                <strong>Destination Tapas</strong> par <strong>Florent HUGOUVIEUX</strong>.
+                Le code source est sous la licence <a href={"https://www.apache.org/licenses/LICENSE-2.0.html"}>Apache
+                2</a>.
+            </p>
+        </div>
+    </footer>
+</div>
 </body>
 </html>
