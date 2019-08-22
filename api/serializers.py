@@ -39,7 +39,7 @@ class MemberOperationSerializer(serializers.Serializer):
 class UserMiscSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserMisc
-        fields = ["total_spent"]
+        fields = ["total_spent", "favorite"]
 
 
 class UserFriendsSerializer(serializers.ModelSerializer):

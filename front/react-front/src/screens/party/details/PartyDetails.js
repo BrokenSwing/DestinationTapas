@@ -8,6 +8,8 @@ import UserName from "../../../components/UserName";
 import { Modal, ModalCardFoot, ModalCard, ModalCardBody, ModalCardHead } from "../../../components/modals";
 import ProductName from "../../../components/ProductName";
 
+const smooth = (price) => Math.round(price * 100) / 100;
+
 export default class PartyDetails extends React.Component {
 
     constructor(props) {
@@ -189,16 +191,26 @@ class PartyRecap extends React.Component {
                                             <td><UserName userId={memberId} /></td>
                                             <td className="has-text-right">{
                                                 this.props.party.price_per_user.filter(r => r.user === memberId).length ?
-                                                    this.props.party.price_per_user.filter(r => r.user === memberId)[0].total : "0"
+                                                    smooth(this.props.party.price_per_user.filter(r => r.user === memberId)[0].total) : "0"
                                             }€</td>
                                         </tr>
                                     ))
+                                }
+                                {
+                                    this.props.party.price_per_user.filter(r => r.user === null).length &&
+                                        <tr>
+                                            <td>Non assigné</td>
+                                            <td className="has-text-right">
+                                                {smooth(this.props.party.price_per_user.filter(r => r.user === null)[0].total)}€
+                                            </td>
+                                        </tr>
+
                                 }
                                 </tbody>
                                 <tfoot>
                                     <tr>
                                         <th>Total</th>
-                                        <th className="has-text-right">{this.props.party.total_price}€</th>
+                                        <th className="has-text-right">{smooth(this.props.party.total_price)}€</th>
                                     </tr>
                                 </tfoot>
                             </table>

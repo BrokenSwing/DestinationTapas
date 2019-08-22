@@ -30,7 +30,15 @@ class UserMisc(models.Model):
 
     @property
     def total_spent(self):
-        return CommandContribution.objects.filter(user=self.user).aggregate(models.Sum('part'))['part__sum']
+        total = CommandContribution.objects.filter(user=self.user).aggregate(models.Sum('part'))['part__sum']
+        return 0 if total is None else round(total, 2)
+
+    @property
+    def favorite(self):
+        result = CommandContribution.objects.filter(user=self.user).values("product").order_by("product").annotate(
+            models.Count("product")).order_by("-product__count").first()
+        return result["product"] if result is not None else None
+
 
 
 class FriendRequest(models.Model):

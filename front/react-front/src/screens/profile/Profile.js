@@ -4,6 +4,7 @@ import Footer from "../../components/Footer";
 import Icon from "../../components/Icon";
 import UserName from "../../components/UserName";
 import { fetchUserMisc } from "../../api/api";
+import ProductName from "../../components/ProductName";
 
 export default class Profile extends React.Component {
 
@@ -38,7 +39,13 @@ export default class Profile extends React.Component {
                             <div className="columns">
                                 <div className="column">
                                     <Icon iconName="heart" iconClasses="is-small"/>
-                                    <span>Kamikaze</span>
+                                    <span>
+                                        {
+                                            this.state.misc && this.state.misc.favorite ?
+                                                <ProductName productId={this.state.misc.favorite}/> :
+                                                "Pas de favori"
+                                        }
+                                    </span>
                                 </div>
 
                                 <div className="column">
@@ -48,7 +55,7 @@ export default class Profile extends React.Component {
 
                                 <div className="column">
                                     <Icon iconName="clock" iconClasses="is-small"/>
-                                    <span>1j 14h 22min 30s</span>
+                                    <span>WIP</span>
                                 </div>
                             </div>
                         </div>

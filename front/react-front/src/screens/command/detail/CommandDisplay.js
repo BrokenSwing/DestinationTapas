@@ -7,6 +7,9 @@ import {fetchCommand} from "../../../api/specific/commands";
 import {fetchProduct} from "../../../api/specific/products";
 import {ProductItem, ProductsCategory, ProductsList} from "../../../components/products";
 import BasicContributionsDisplay from "./BasicContributionsDisplay";
+import ShotsContributionsDisplay from "./ShotsContributionsDisplay";
+
+const displayShots = (product) => product.name === "Plateau de shooters";
 
 export default class CommandDisplay extends React.Component {
 
@@ -72,8 +75,11 @@ export default class CommandDisplay extends React.Component {
                         <h2 className="subtitle is-size-5">Participants</h2>
 
                         {
-                            this.state.command &&
-                            <BasicContributionsDisplay contributions={this.state.command.contributions}/>
+                            this.state.product && (
+                                displayShots(this.state.product) ?
+                                    <ShotsContributionsDisplay contributions={this.state.command.contributions} /> :
+                                    <BasicContributionsDisplay contributions={this.state.command.contributions}/>
+                            )
                         }
 
                     </div>
