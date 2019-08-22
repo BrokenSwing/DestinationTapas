@@ -3,7 +3,6 @@ import {ModalCard, Modal, ModalCardHead, ModalCardBody, ModalCardFoot} from "../
 import {ProductItem, ProductsCategory, ProductsDisplay, ProductsList} from "../../../components/products";
 import {fetchProduct} from "../../../api/specific/products";
 import PropTypes from "prop-types";
-import ProductName from "../../../components/ProductName";
 import UserName from "../../../components/UserName";
 import {fetchUser} from "../../../api/specific/users";
 
@@ -18,6 +17,7 @@ export default class SelectShots extends React.Component {
         this.getRemainingCount = this.getRemainingCount.bind(this);
         this.submitCommand = this.submitCommand.bind(this);
         this.getPriceForCurrentState = this.getPriceForCurrentState.bind(this);
+        this.sendContributions = this.sendContributions.bind(this);
 
         this.state = {
             modalOpened: false,
@@ -28,6 +28,7 @@ export default class SelectShots extends React.Component {
             prices: this.calculatePrices(),
             membersNames: {},
             commands: [],
+            nextCommandId: 0,
         };
 
     }
@@ -53,7 +54,31 @@ export default class SelectShots extends React.Component {
             this.setState({
                 prices: this.calculatePrices(),
             });
+            this.sendContributions();
         }
+    }
+
+    sendContributions() {
+        this.setState((state, props) => {
+            if (this.getRemainingCount(state) === 0) {
+                const contributions = [];
+                let count = 0;
+                state.commands.forEach(command => {
+                    for(let i = 0; i < command.count; i++) {
+                        contributions.push({
+                            product: command.product.id,
+                            user: command.member,
+                            part: state.prices[count],
+                        });
+                        count += 1;
+                    }
+                });
+                props.submitContributions(contributions);
+            } else {
+                props.submitContributions([])
+            }
+            return {};
+        });
     }
 
     calculatePrices() {
@@ -81,16 +106,28 @@ export default class SelectShots extends React.Component {
                 const count = state.selectedCount;
                 const product = state.selectedProduct;
                 const member = state.selectedMember > 0 ? state.selectedMember : null;
-                const commands = state.commands;
-                commands.push({
-                    count,
-                    product,
-                    member,
-                });
+                const commands = state.commands.slice();
+                const mergeableCommands = commands.filter(command =>
+                    command.product.id === state.selectedProduct.id && command.member === state.selectedMember);
+                let nextCommandId;
+                if (mergeableCommands.length > 0) {
+                    mergeableCommands[0].count += this.state.selectedCount;
+                    nextCommandId = state.nextCommandId;
+                } else {
+                    commands.push({
+                        count,
+                        product,
+                        member,
+                        id: state.nextCommandId,
+                    });
+                    nextCommandId = state.nextCommandId + 1;
+                }
                 return {
                     commands,
+                    nextCommandId,
                 };
             });
+            this.sendContributions();
         }
     }
 
@@ -114,8 +151,11 @@ export default class SelectShots extends React.Component {
         });
     }
 
-    getRemainingCount() {
-        return 14 - this.state.commands.map(c => c.count).reduce((a, b) => a + b, 0);
+    getRemainingCount(state) {
+        if(!state) {
+            state = this.state;
+        }
+        return 14 - state.commands.map(c => c.count).reduce((a, b) => a + b, 0);
     }
 
     getPriceForCurrentState() {
@@ -131,19 +171,91 @@ export default class SelectShots extends React.Component {
         return total;
     }
 
+    removeCommand(id) {
+        this.setState((state) => {
+            const commands = state.commands.filter(c => c.id !== id);
+            return {
+                commands,
+            };
+        });
+        this.sendContributions();
+    }
+
     render() {
+        const commands = this.state.commands.map((command, i, all) => {
+            let start = 0;
+            for (let j = 0; j < i; j++) {
+                start += all[j].count;
+            }
+            const end = start + command.count - 1;
+            let price = 0;
+            for (let j = start; j <= end; j++) {
+                price += this.state.prices[j];
+            }
+            price = Math.round(price * 100) / 100;
+            return {
+                ...command,
+                start,
+                end,
+                price,
+            };
+        });
+
         return (
             <>
                 <h2 className="subtitle is-size-5">
                     3. Sélectionnez les shooters que vous souhaitez
                 </h2>
 
+                <table className="table is-striped">
+                    <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Shot</th>
+                        <th>Attribution</th>
+                        <th>Prix</th>
+                        <th/>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {
+                        commands.map((command) => (
+                            <tr key={command.id}>
+                                <td>
+                                    {
+                                        command.start === command.end ?
+                                            <>{command.start + 1}</> :
+                                            <>{`${command.start + 1}-${command.end + 1}`}</>
+                                    }
+                                </td>
+                                <td>{command.product.name}</td>
+                                <td>
+                                    {
+                                        command.member ?
+                                            <UserName userId={command.member}/> :
+                                            <>Non assigné</>
+                                    }
+                                </td>
+                                <td>{command.price}€</td>
+                                <td><a className="delete" onClick={() => this.removeCommand(command.id)}/></td>
+                            </tr>
+                        ))
+                    }
+                    {
+                        commands.length === 0 &&
+                        <tr>
+                            <td colSpan={5} className="has-text-centered">Pas encore de shots commandés</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+
                 {
                     this.getRemainingCount() > 0 ?
-                    <ProductsDisplay preFilter={(product) => product["product_type"] === "SHOT"}
-                                     showCommandButton={true}
-                                     onCommand={this.onCommand}
-                    /> :
+                        <ProductsDisplay preFilter={(product) => product["product_type"] === "SHOT"}
+                                         showCommandButton={true}
+                                         onCommand={this.onCommand}
+                        /> :
                         <h3 className="subtitle is-size-6">Nombre de shooters maximum atteint</h3>
                 }
 
