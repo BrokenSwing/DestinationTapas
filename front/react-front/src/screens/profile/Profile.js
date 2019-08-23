@@ -31,7 +31,7 @@ export default class Profile extends React.Component {
                 <NavBar/>
                 <section className="section">
                     <div className="container">
-                        <h1 className="title is-4 has-text-centered">Profil</h1>
+                        <h1 className="title is-4">Profil</h1>
 
                         <div className="box">
                             <h2 className="subtitle"><UserName userId={Number(localStorage.getItem("userId"))} /></h2>

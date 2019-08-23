@@ -167,7 +167,7 @@ export default class Friends extends React.Component {
                 <NavBar/>
                 <section className="section">
                     <div className="container">
-                        <h1 className="title is-4 has-text-centered">Amis</h1>
+                        <h1 className="title is-4">Amis</h1>
 
                         <h2 className="subtitle">Ajouter un ami</h2>
                         <div className="field has-addons">
