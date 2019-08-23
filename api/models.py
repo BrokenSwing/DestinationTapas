@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.dispatch import receiver
 
 
 class UserMisc(models.Model):
@@ -173,3 +174,9 @@ class Party(models.Model):
         """Returns the price each user needs to pay"""
         return CommandContribution.objects.filter(command__party=self).values('user') \
             .annotate(total=models.Sum('part')).order_by('user__username')
+
+
+@receiver(models.signals.post_save, sender=User, dispatch_uid="user_post_save_listener")
+def create_user_misc(sender, **kwargs):
+    if kwargs["created"]:
+        UserMisc.objects.create(user=kwargs["instance"])
