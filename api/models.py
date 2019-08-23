@@ -41,7 +41,6 @@ class UserMisc(models.Model):
         return result["product"] if result is not None else None
 
 
-
 class FriendRequest(models.Model):
     """
     Represents a friend request made by an user to an other user.

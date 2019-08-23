@@ -43,6 +43,20 @@ export const createParty = async () => {
     };
 };
 
+export const finishParty = async (partyId) => {
+    const result = await postWithToken(endpoints.SINGLE_PARTY(partyId));
+    if(result.ok) {
+        const party = await result.json();
+        return {
+            ok: true,
+            party,
+        };
+    }
+    return {
+        ok: false,
+    };
+};
+
 /////////////////////////////////////////////////////
 ////////////////////// Members //////////////////////
 /////////////////////////////////////////////////////
