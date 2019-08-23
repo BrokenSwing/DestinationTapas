@@ -7,6 +7,7 @@ import {fetchCommand, fetchParty, finishParty} from "../../../api/api";
 import UserName from "../../../components/UserName";
 import {Modal, ModalCardFoot, ModalCard, ModalCardBody, ModalCardHead} from "../../../components/modals";
 import ProductName from "../../../components/ProductName";
+import Link from "../../../components/Link";
 
 const smooth = (price) => Math.round(price * 100) / 100;
 
@@ -75,12 +76,15 @@ export default class PartyDetails extends React.Component {
                                 </div>
 
                                 <div className="field has-text-centered">
-                                    <a className="button is-link is-fullwidth navigate"
-                                       disabled={this.state.party.status === "FINISHED" || !this.state.party.members.includes(Number(localStorage.getItem("userId")))}
-                                       href={Aviator.hrefFor("/parties/:id/new-command", {namedParams: {id: this.partyId}})}
+                                    <Link className="button is-link is-fullwidth"
+                                          disabled={
+                                              this.state.party.status === "FINISHED" ||
+                                              !this.state.party.members.includes(Number(localStorage.getItem("userId")))
+                                          }
+                                          href={Aviator.hrefFor("/parties/:id/new-command", {namedParams: {id: this.partyId}})}
                                     >
                                         Nouvelle commande
-                                    </a>
+                                    </Link>
                                 </div>
 
                                 <h2 className="subtitle">Commandes :</h2>

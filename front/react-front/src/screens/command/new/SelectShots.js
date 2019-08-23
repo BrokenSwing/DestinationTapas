@@ -294,7 +294,7 @@ export default class SelectShots extends React.Component {
                                             onChange={(e) => this.setState({selectedMember: e.target.selectedIndex})}
                                             value={this.state.selectedMember}
                                         >
-                                            <option key={-1} value={null}>-------------</option>
+                                            <option key={-1} value={null}>Non assigné</option>
                                             {this.props.partyMembers.map(member => (
                                                 <option key={member}
                                                         value={member}
