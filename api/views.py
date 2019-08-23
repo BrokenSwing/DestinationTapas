@@ -7,7 +7,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework import status
-from .permissions import IsMemberOfParty, IsOwner
+from .permissions import IsMemberOfParty, IsOwner, IsLeaderOfParty
 from django.db import models
 from django.shortcuts import get_object_or_404
 
@@ -202,7 +202,7 @@ class WithUserIdTokenProviderView(ObtainAuthToken):
 class PartiesView(generics.ListCreateAPIView):
     queryset = Party.objects.all()
     serializer_class = PartySerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsLeaderOfParty]
 
     def get_queryset(self):
         queryset = Party.objects.all()
@@ -223,6 +223,14 @@ class PartiesView(generics.ListCreateAPIView):
 class PartyDetailView(generics.RetrieveAPIView):
     queryset = Party.objects.all()
     serializer_class = PartySerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsLeaderOfParty]
+
+    def post(self, request, *args, **kwargs):
+        party = self.get_object()
+        party.status = "FINISHED"
+        party.save()
+        serializer = self.get_serializer(party)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class PartyMembersUpdateView(generics.GenericAPIView):
@@ -345,7 +353,8 @@ class PartyCommandsView(generics.RetrieveAPIView):
     def create_contribution(contribution_data):
         data = {
             "product": get_object_or_404(Product, id=contribution_data["product"]),
-            "user": None if contribution_data["user"] is None else get_object_or_404(User, id=contribution_data["user"]),
+            "user": None if contribution_data["user"] is None else get_object_or_404(User,
+                                                                                     id=contribution_data["user"]),
             "part": contribution_data["part"],
         }
         return CommandContribution(**data)
