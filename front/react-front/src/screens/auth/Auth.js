@@ -30,7 +30,7 @@ class Auth extends React.Component {
                                 .then(result => {
                                     actions.setSubmitting(false);
                                     if(result.ok) {
-                                        this.props.cookies.set("auth_token", result.token);
+                                        this.props.cookies.set("auth_token", result.token, { path: "/"});
                                         localStorage.setItem("userId", result.id);
                                         Aviator.refresh();
                                     } else {

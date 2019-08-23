@@ -20,7 +20,7 @@ class NavBar extends React.Component {
     }
 
     triggerDisconnection() {
-        this.props.cookies.remove("auth_token");
+        this.props.cookies.remove("auth_token", { path: "/"});
         Aviator.navigate("/");
     }
 
