@@ -10,6 +10,7 @@ from rest_framework import status
 from .permissions import IsMemberOfParty, IsOwner, IsLeaderOfParty
 from django.db import models
 from django.shortcuts import get_object_or_404
+from datetime import datetime
 
 
 # Users #
@@ -228,6 +229,7 @@ class PartyDetailView(generics.RetrieveAPIView):
     def post(self, request, *args, **kwargs):
         party = self.get_object()
         party.status = "FINISHED"
+        party.end_date = datetime.now()
         party.save()
         serializer = self.get_serializer(party)
         return Response(serializer.data, status=status.HTTP_200_OK)
