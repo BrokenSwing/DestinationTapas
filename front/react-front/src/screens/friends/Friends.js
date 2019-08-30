@@ -2,8 +2,10 @@ import React from "react";
 import Icon from "../../components/Icon";
 import NavBar from "../../components/NavBar";
 import Footer from "../../components/Footer";
-import { fetchUserFriends, addFriend, removeFriend, acceptFriend,
-    refuseFriend, findUserIdFromName, cancelFriend } from "../../api/api";
+import {
+    fetchUserFriends, addFriend, removeFriend, acceptFriend,
+    refuseFriend, findUserIdFromName, cancelFriend
+} from "../../api";
 import UserName from "../../components/UserName";
 
 export default class Friends extends React.Component {
@@ -41,12 +43,12 @@ export default class Friends extends React.Component {
             submitting: true,
         });
         findUserIdFromName(this.state.friendName).then(result => {
-            if(result.ok) {
+            if (result.ok) {
                 addFriend(localStorage.getItem("userId"), result.id).then(result => {
                     this.setState({
                         submitting: false,
                     });
-                    if(result.ok) {
+                    if (result.ok) {
                         this.setState({
                             sent: result.sent_requests,
                             received: result.received_requests,
@@ -54,7 +56,9 @@ export default class Friends extends React.Component {
                             friendName: "",
                         });
                     }
-                }).catch(console.log);
+                }).catch(() => this.setState({
+                    submitting: false,
+                }));
             } else {
                 this.setState({
                     submitting: false,
@@ -68,7 +72,7 @@ export default class Friends extends React.Component {
             sent: state.sent.filter(sentTo => sentTo !== id),
         }));
         cancelFriend(localStorage.getItem("userId"), id).then(result => {
-            if(result.ok) {
+            if (result.ok) {
                 this.setState({
                     sent: result.sent_requests,
                     received: result.received_requests,
@@ -94,7 +98,7 @@ export default class Friends extends React.Component {
             };
         });
         acceptFriend(localStorage.getItem("userId"), id).then(result => {
-            if(result.ok) {
+            if (result.ok) {
                 this.setState({
                     sent: result.sent_requests,
                     received: result.received_requests,
@@ -119,7 +123,7 @@ export default class Friends extends React.Component {
         }));
 
         refuseFriend(localStorage.getItem("userId"), id).then(result => {
-            if(result.ok) {
+            if (result.ok) {
                 this.setState({
                     sent: result.sent_requests,
                     received: result.received_requests,
@@ -143,7 +147,7 @@ export default class Friends extends React.Component {
         }));
 
         removeFriend(localStorage.getItem("userId"), id).then(result => {
-            if(result.ok) {
+            if (result.ok) {
                 this.setState({
                     sent: result.sent_requests,
                     received: result.received_requests,
@@ -164,69 +168,62 @@ export default class Friends extends React.Component {
     render() {
         return (
             <>
-                <NavBar/>
-                <section className="section">
-                    <div className="container">
-                        <h1 className="title is-4">Amis</h1>
+                <h1 className="title is-4">Amis</h1>
 
-                        <h2 className="subtitle">Ajouter un ami</h2>
-                        <div className="field has-addons">
-                            <div className="control has-icons-left">
-                                <Icon iconName="search" iconClasses="is-left"/>
-                                <input className="input" type="text" placeholder="Pseudo" value={this.state.friendName}
-                                        onChange={(e) => this.setState({friendName: e.target.value})}
-                                />
-                            </div>
-                            <div className="control">
-                                <a className="button is-link"
-                                   disabled={this.state.submitting || this.state.friendName.length === 0}
-                                   onClick={this.addFriend}
-                                >
-                                    {this.state.submitting ? "Envoie ..." : "Ajouter"}
-                                </a>
-                            </div>
-                        </div>
-
-                        <h2 className="subtitle">Demandes reçues : </h2>
-
-                        {
-                            this.state.received.length === 0 &&
-                                <h3 className="has-text-centered subtitle is-size-6">Pas de demandes</h3>
-                        }
-
-                        {this.state.received.map(id => (
-                            <ReceivedRequest key={id}
-                                             from={id}
-                                             accept={this.acceptFriendRequest}
-                                             refuse={this.refuseFriendRequest}
-                            />
-                        ))}
-
-                        <h2 className="subtitle">Demandes envoyées : </h2>
-
-                        {
-                            this.state.sent.length === 0 &&
-                                <h3 className="has-text-centered subtitle is-size-6">Pas de demandes</h3>
-                        }
-
-                        {this.state.sent.map(id => (
-                            <SentRequest key={id} to={id} cancel={this.cancelFriendRequest}/>
-                        ))}
-
-                        <h2 className="subtitle">Amis : </h2>
-
-                        {
-                            this.state.friends.length === 0 &&
-                                <h3 className="has-text-centered subtitle is-size-6">Pas d'amis</h3>
-                        }
-
-                        {this.state.friends.map(id => (
-                            <Friend key={id} userId={id} remove={this.deleteFriend} />
-                        ))}
-
+                <h2 className="subtitle">Ajouter un ami</h2>
+                <div className="field has-addons">
+                    <div className="control has-icons-left">
+                        <Icon iconName="search" iconClasses="is-left"/>
+                        <input className="input" type="text" placeholder="Pseudo" value={this.state.friendName}
+                               onChange={(e) => this.setState({friendName: e.target.value})}
+                        />
                     </div>
-                </section>
-                <Footer/>
+                    <div className="control">
+                        <a className="button is-link"
+                           disabled={this.state.submitting || this.state.friendName.length === 0}
+                           onClick={this.addFriend}
+                        >
+                            {this.state.submitting ? "Envoie ..." : "Ajouter"}
+                        </a>
+                    </div>
+                </div>
+
+                <h2 className="subtitle">Demandes reçues : </h2>
+
+                {
+                    this.state.received.length === 0 &&
+                    <h3 className="has-text-centered subtitle is-size-6">Pas de demandes</h3>
+                }
+
+                {this.state.received.map(id => (
+                    <ReceivedRequest key={id}
+                                     from={id}
+                                     accept={this.acceptFriendRequest}
+                                     refuse={this.refuseFriendRequest}
+                    />
+                ))}
+
+                <h2 className="subtitle">Demandes envoyées : </h2>
+
+                {
+                    this.state.sent.length === 0 &&
+                    <h3 className="has-text-centered subtitle is-size-6">Pas de demandes</h3>
+                }
+
+                {this.state.sent.map(id => (
+                    <SentRequest key={id} to={id} cancel={this.cancelFriendRequest}/>
+                ))}
+
+                <h2 className="subtitle">Amis : </h2>
+
+                {
+                    this.state.friends.length === 0 &&
+                    <h3 className="has-text-centered subtitle is-size-6">Pas d'amis</h3>
+                }
+
+                {this.state.friends.map(id => (
+                    <Friend key={id} userId={id} remove={this.deleteFriend}/>
+                ))}
             </>
         );
     }
@@ -279,7 +276,7 @@ const Friend = ({userId, remove}) => (
             <div className="column">
                 <div className="field has-icons-left">
                     <Icon iconName="user-friends" iconClasses="is-left"/>
-                    <span><UserName userId={userId} /></span>
+                    <span><UserName userId={userId}/></span>
                 </div>
             </div>
             <div className="column">

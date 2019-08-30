@@ -1,7 +1,7 @@
 import React from "react";
 import NavBar from "../../../components/NavBar";
 import Footer from "../../../components/Footer";
-import {fetchProduct, fetchPartyMembers, createCommandForParty} from "../../../api/api";
+import {fetchProduct, fetchPartyMembers, createCommandForParty} from "../../../api";
 import "aviator";
 import SelectContributions from "./SelectContributions";
 import Icon from "../../../components/Icon";
@@ -107,88 +107,82 @@ export default class NewCommand extends React.Component {
     render() {
         return (
             <>
-                <NavBar/>
-                <section className="section">
-                    <div className="container">
-                        <a className="is-link navigate"
-                           href={Aviator.hrefFor("/parties/:id/", {namedParams: {id: this.partyId}})}
-                        >
-                            <Icon iconName="arrow-left" iconClasses="is-small"/><span>Retour</span>
-                        </a>
-                        <h1 className="title">Nouvelle commande</h1>
-                        <h2 className="subtitle is-size-5">1. Sélectionnez ce que vous voulez commander</h2>
+                <a className="is-link navigate"
+                   href={Aviator.hrefFor("/parties/:id/", {namedParams: {id: this.partyId}})}
+                >
+                    <Icon iconName="arrow-left" iconClasses="is-small"/><span>Retour</span>
+                </a>
+                <h1 className="title">Nouvelle commande</h1>
+                <h2 className="subtitle is-size-5">1. Sélectionnez ce que vous voulez commander</h2>
+                {
+                    !this.state.commandProduct &&
+                    <ProductsDisplay showCommandButton={true} onCommand={this.onCommand}/>
+                }
+                {
+                    this.state.commandProduct &&
+                    <>
+                        <ProductsList>
+                            <ProductsCategory name="Choisis">
+                                <ProductItem
+                                    product={{...this.state.commandProduct, price: this.state.productPrice}}
+                                    selected={true}
+                                    onSelect={this.backToProductChoice}
+                                />
+                            </ProductsCategory>
+                        </ProductsList>
+
+                        <h2 className="subtitle is-size-5">2. Changez le prix si celui-ci n'est pas valide</h2>
+
+                        <div className="field has-addons">
+                            <div className="control">
+                                <input className="input has-text-right"
+                                       name="price"
+                                       type="text"
+                                       placeholder={this.state.commandProduct.price}
+                                       value={this.state.priceFieldValue}
+                                       onChange={this.onPriceChange}
+                                />
+                            </div>
+                            <p className="control">
+                                <a className="button is-static">€</a>
+                            </p>
+                        </div>
+
                         {
-                            !this.state.commandProduct &&
-                            <ProductsDisplay showCommandButton={true} onCommand={this.onCommand}/>
+                            needShotsSelection(this.state.commandProduct) ?
+                                <SelectShots
+                                    price={this.state.productPrice}
+                                    submitContributions={this.setContributions}
+                                    partyMembers={this.state.partyMembers}
+                                /> :
+                                <SelectContributions product={this.state.commandProduct}
+                                                     price={this.state.productPrice}
+                                                     partyMembers={this.state.partyMembers}
+                                                     submitContributions={this.setContributions}
+                                />
                         }
-                        {
-                            this.state.commandProduct &&
-                            <>
-                                <ProductsList>
-                                    <ProductsCategory name="Choisis">
-                                        <ProductItem
-                                            product={{...this.state.commandProduct, price: this.state.productPrice}}
-                                            selected={true}
-                                            onSelect={this.backToProductChoice}
-                                        />
-                                    </ProductsCategory>
-                                </ProductsList>
 
-                                <h2 className="subtitle is-size-5">2. Changez le prix si celui-ci n'est pas valide</h2>
+                        <h2 className="subtitle is-size-5">4. Validez votre commande</h2>
 
-                                <div className="field has-addons">
-                                    <div className="control">
-                                        <input className="input has-text-right"
-                                               name="price"
-                                               type="text"
-                                               placeholder={this.state.commandProduct.price}
-                                               value={this.state.priceFieldValue}
-                                               onChange={this.onPriceChange}
-                                        />
-                                    </div>
-                                    <p className="control">
-                                        <a className="button is-static">€</a>
-                                    </p>
-                                </div>
-
-                                {
-                                    needShotsSelection(this.state.commandProduct) ?
-                                        <SelectShots
-                                            price={this.state.productPrice}
-                                            submitContributions={this.setContributions}
-                                            partyMembers={this.state.partyMembers}
-                                        /> :
-                                        <SelectContributions product={this.state.commandProduct}
-                                                             price={this.state.productPrice}
-                                                             partyMembers={this.state.partyMembers}
-                                                             submitContributions={this.setContributions}
-                                        />
-                                }
-
-                                <h2 className="subtitle is-size-5">4. Validez votre commande</h2>
-
-                                <div className="field is-grouped">
-                                    <p className="control">
-                                        <a className="button is-primary"
-                                           disabled={this.state.contributions.length === 0}
-                                           onClick={this.submit}
-                                        >
-                                            Confirmer
-                                        </a>
-                                    </p>
-                                    <p className="control">
-                                        <a className="button is-light navigate"
-                                           href={Aviator.hrefFor("/parties/:id/", {namedParams: {id: this.partyId}})}
-                                        >
-                                            Annuler
-                                        </a>
-                                    </p>
-                                </div>
-                            </>
-                        }
-                    </div>
-                </section>
-                <Footer/>
+                        <div className="field is-grouped">
+                            <p className="control">
+                                <a className="button is-primary"
+                                   disabled={this.state.contributions.length === 0}
+                                   onClick={this.submit}
+                                >
+                                    Confirmer
+                                </a>
+                            </p>
+                            <p className="control">
+                                <a className="button is-light navigate"
+                                   href={Aviator.hrefFor("/parties/:id/", {namedParams: {id: this.partyId}})}
+                                >
+                                    Annuler
+                                </a>
+                            </p>
+                        </div>
+                    </>
+                }
             </>
         );
     }

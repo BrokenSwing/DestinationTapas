@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@babel/runtime": "^7.4.3",
     "aviator": "^0.6.6",
     "bulma": "^0.7.5",
     "formik": "^1.5.8",
@@ -10,11 +11,13 @@
     "react": "^16.8.6",
     "react-cookie": "^4.0.1",
     "react-dom": "^16.8.6",
+    "react-helmet": "^5.2.1",
     "yup": "^0.27.0"
   },
   "scripts": {
     "build": "webpack --mode production",
-    "dev": "webpack --mode development"
+    "dev": "webpack --mode development",
+    "stats": "webpack --profile --json > compilation-stats.json"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -34,10 +37,11 @@
   "proxy": "http://localhost:8000",
   "devDependencies": {
     "@babel/core": "^7.4.3",
+    "@babel/plugin-proposal-throw-expressions": "^7.2.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/plugin-transform-runtime": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
     "@babel/preset-react": "^7.0.0",
-    "@babel/runtime": "^7.4.3",
     "babel-loader": "^8.0.5",
     "css-loader": "^3.1.0",
     "file-loader": "^4.2.0",

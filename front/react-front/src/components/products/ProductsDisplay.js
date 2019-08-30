@@ -2,7 +2,7 @@ import React from "react";
 import Icon from "../Icon";
 import {ProductItem, ProductsCategory, ProductsList} from "./index";
 import PropTypes from "prop-types";
-import {fetchAllProducts} from "../../api/api";
+import {fetchAllProducts} from "../../api";
 
 const TYPES_TO_CAT = {
     "OTHER": "Autre",
