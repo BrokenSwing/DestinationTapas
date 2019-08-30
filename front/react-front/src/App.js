@@ -7,9 +7,7 @@ import ProductsDisplay from "./components/products/ProductsDisplay";
 function App() {
   return (
     <>
-        <NavBar />
         <ProductsDisplay />
-        <Footer />
     </>
   );
 }
