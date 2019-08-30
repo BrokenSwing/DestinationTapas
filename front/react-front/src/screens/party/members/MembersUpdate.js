@@ -2,9 +2,9 @@ import React from "react";
 import NavBar from "../../../components/NavBar";
 import Footer from "../../../components/Footer";
 import Icon from "../../../components/Icon";
-import { fetchParty, fetchUserFriends, addMemberToParty, removeMemberFromParty } from "../../../api";
+import {fetchParty, fetchUserFriends, addMemberToParty, removeMemberFromParty} from "../../../api";
 import "aviator";
-import { Selector, Selectable, SelectorData } from "../../../components/selector";
+import {Selector, Selectable, SelectorData} from "../../../components/selector";
 import UserName from "../../../components/UserName";
 
 export default class MembersUpdate extends React.Component {
@@ -22,7 +22,7 @@ export default class MembersUpdate extends React.Component {
     }
 
     addMember(id) {
-        if(this.state.party && this.state.party.status === "FINISHED") {
+        if (this.state.party && this.state.party.status === "FINISHED") {
             return;
         }
 
@@ -35,7 +35,7 @@ export default class MembersUpdate extends React.Component {
         });
 
         addMemberToParty(this.partyId, id).then(result => {
-            if(result.ok) {
+            if (result.ok) {
                 this.setState({
                     members: result.members,
                 });
@@ -48,7 +48,7 @@ export default class MembersUpdate extends React.Component {
     }
 
     removeMember(id) {
-        if(this.state.unmodifiable.includes(id) || this.state.party && this.state.party.status === "FINISHED") {
+        if (this.state.unmodifiable.includes(id) || this.state.party && this.state.party.status === "FINISHED") {
             return;
         }
 
@@ -57,7 +57,7 @@ export default class MembersUpdate extends React.Component {
         }));
 
         removeMemberFromParty(this.partyId, id).then(result => {
-            if(result.ok) {
+            if (result.ok) {
                 this.setState({
                     members: result.members,
                 });
@@ -77,16 +77,16 @@ export default class MembersUpdate extends React.Component {
         this.partyId = Aviator.getCurrentRequest().namedParams.id;
 
         fetchParty(this.partyId).then(result => {
-            if(result.ok) {
+            if (result.ok) {
                 const unmodifiable = [];
                 result.party["price_per_user"].forEach(o => unmodifiable.push(o.user));
-                if(!unmodifiable.includes(result.party.leader)) {
+                if (!unmodifiable.includes(result.party.leader)) {
                     unmodifiable.push(result.party.leader);
                 }
                 this.setState((state, props) => {
                     const users = state.users.slice();
                     result.party.members.forEach(memberId => {
-                        if(!users.includes(memberId)) {
+                        if (!users.includes(memberId)) {
                             users.push(memberId);
                         }
                     });
@@ -101,11 +101,11 @@ export default class MembersUpdate extends React.Component {
         }).catch(console.log);
 
         fetchUserFriends(localStorage.getItem("userId")).then(result => {
-            if(result.ok) {
+            if (result.ok) {
                 this.setState((state, props) => {
                     const users = state.users.slice();
                     result.friends.forEach(friendId => {
-                        if(!users.includes(friendId)) {
+                        if (!users.includes(friendId)) {
                             users.push(friendId);
                         }
                     });
@@ -121,30 +121,23 @@ export default class MembersUpdate extends React.Component {
     render() {
         return (
             <>
-                <NavBar />
-                <section className="section">
-                    <div className="container">
-                        <a className="is-link navigate" href={Aviator.hrefFor(`/parties/${this.partyId}`)}>
-                            <Icon iconName="arrow-left" iconClasses="is-small" /><span>Retour</span>
-                        </a>
-                        <h1 className="title">Participants ({this.state.members.length})</h1>
+                <a className="is-link navigate" href={Aviator.hrefFor(`/parties/${this.partyId}`)}>
+                    <Icon iconName="arrow-left" iconClasses="is-small"/><span>Retour</span>
+                </a>
+                <h1 className="title">Participants ({this.state.members.length})</h1>
 
-                        <Selector>
-                            {this.state.users.map(id => (
-                                <Selectable key={id}
-                                            selected={this.state.members.includes(id)}
-                                            onSelect={() => this.addMember(id)}
-                                            onDeselect={() => this.removeMember(id)}
-                                            locked={this.state.unmodifiable.includes(id) || this.state.party && this.state.party.status === "FINISHED"}
-                                >
-                                    <SelectorData><UserName userId={id} /></SelectorData>
-                                </Selectable>
-                            ))}
-                        </Selector>
-
-                    </div>
-                </section>
-                <Footer />
+                <Selector>
+                    {this.state.users.map(id => (
+                        <Selectable key={id}
+                                    selected={this.state.members.includes(id)}
+                                    onSelect={() => this.addMember(id)}
+                                    onDeselect={() => this.removeMember(id)}
+                                    locked={this.state.unmodifiable.includes(id) || this.state.party && this.state.party.status === "FINISHED"}
+                        >
+                            <SelectorData><UserName userId={id}/></SelectorData>
+                        </Selectable>
+                    ))}
+                </Selector>
             </>
         );
     }

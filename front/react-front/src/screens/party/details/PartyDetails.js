@@ -55,62 +55,56 @@ export default class PartyDetails extends React.Component {
         const modal = (<PartyRecap party={this.state.party} close={this.closeParty}/>);
         return (
             <>
-                <NavBar/>
-                <section className="section">
-                    <div className="container">
-                        <a className="is-link navigate" href={Aviator.hrefFor("/parties")}>
-                            <Icon iconName="arrow-left" iconClasses="is-small"/><span>Retour</span>
-                        </a>
-                        <h1 className="title">Détail de la soirée</h1>
+                <a className="is-link navigate" href={Aviator.hrefFor("/parties")}>
+                    <Icon iconName="arrow-left" iconClasses="is-small"/><span>Retour</span>
+                </a>
+                <h1 className="title">Détail de la soirée</h1>
+
+                {
+                    this.state.party &&
+                    <>
+
+                        <div className="field has-text-centered">
+                            <a className="button is-fullwidth navigate"
+                               href={Aviator.hrefFor("/parties/:id/members", this.partyId)}>
+                                <Icon iconName="users" iconClasses="is-small"/>
+                                <span>Participants ({this.state.party.members.length})</span>
+                            </a>
+                        </div>
+
+                        <div className="field has-text-centered">
+                            <Link className="button is-link is-fullwidth"
+                                  disabled={
+                                      this.state.party.status === "FINISHED" ||
+                                      !this.state.party.members.includes(Number(localStorage.getItem("userId")))
+                                  }
+                                  href={Aviator.hrefFor("/parties/:id/new-command", {namedParams: {id: this.partyId}})}
+                            >
+                                Nouvelle commande
+                            </Link>
+                        </div>
+
+                        <h2 className="subtitle">Commandes :</h2>
+
+                        {this.state.party.commands.map(commandId => (
+                            <Command key={commandId}
+                                     commandId={commandId}
+                                     onClick={() => Aviator.navigate("/parties/:id/commands/:command/", {
+                                         namedParams: {
+                                             id: this.partyId,
+                                             command: commandId,
+                                         },
+                                     })}
+                            />
+                        ))}
 
                         {
-                            this.state.party &&
-                            <>
-
-                                <div className="field has-text-centered">
-                                    <a className="button is-fullwidth navigate"
-                                       href={Aviator.hrefFor("/parties/:id/members", this.partyId)}>
-                                        <Icon iconName="users" iconClasses="is-small"/>
-                                        <span>Participants ({this.state.party.members.length})</span>
-                                    </a>
-                                </div>
-
-                                <div className="field has-text-centered">
-                                    <Link className="button is-link is-fullwidth"
-                                          disabled={
-                                              this.state.party.status === "FINISHED" ||
-                                              !this.state.party.members.includes(Number(localStorage.getItem("userId")))
-                                          }
-                                          href={Aviator.hrefFor("/parties/:id/new-command", {namedParams: {id: this.partyId}})}
-                                    >
-                                        Nouvelle commande
-                                    </Link>
-                                </div>
-
-                                <h2 className="subtitle">Commandes :</h2>
-
-                                {this.state.party.commands.map(commandId => (
-                                    <Command key={commandId}
-                                             commandId={commandId}
-                                             onClick={() => Aviator.navigate("/parties/:id/commands/:command/", {
-                                                 namedParams: {
-                                                     id: this.partyId,
-                                                     command: commandId,
-                                                 },
-                                             })}
-                                    />
-                                ))}
-
-                                {
-                                    this.state.party.commands.length === 0 &&
-                                    <h3 className="has-text-centered subtitle is-size-6">Pas de commandes</h3>
-                                }
-                            </>
+                            this.state.party.commands.length === 0 &&
+                            <h3 className="has-text-centered subtitle is-size-6">Pas de commandes</h3>
                         }
-                        {modal}
-                    </div>
-                </section>
-                <Footer/>
+                    </>
+                }
+                {modal}
             </>
         );
     }

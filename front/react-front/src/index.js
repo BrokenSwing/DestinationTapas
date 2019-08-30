@@ -25,6 +25,22 @@ class Navigator extends React.Component {
             '/auth': "authPage",
             '/products': "productsPage",
             '/friends': "friendsPage",
+            '/profile': "profilePage",
+
+            '/parties': {
+                target: this,
+                "/": "partiesPage",
+                "/:id": {
+                    target: this,
+                    "/": "partyDetailPage",
+                    "/members": "partyMembersPage",
+                    "/new-command": "newCommandPage",
+                    "/commands": {
+                        target: this,
+                        "/:command": "commandDetailPage"
+                    }
+                }
+            }
         });
         Aviator.dispatch();
         Aviator.refresh();
@@ -78,6 +94,48 @@ class Navigator extends React.Component {
                 content: <Friends/>
             });
         });
+    }
+
+    profilePage() {
+        this.fetchModule(import(/* webpackChunkName: "Profile" */ "./screens/profile/Profile"),
+            Profile => this.setState({
+                content: <Profile/>,
+            }));
+    }
+
+    partiesPage() {
+        this.fetchModule(import(/* webpackChunkName: "Parties" */ "./screens/party/Parties"),
+            Parties => this.setState({
+                content: <Parties/>,
+            }));
+    }
+
+    partyDetailPage() {
+        this.fetchModule(import(/* webpackChunkName: "PartyDetail" */ "./screens/party/details/PartyDetails"),
+            PartyDetails => this.setState({
+                content: <PartyDetails/>,
+            }));
+    }
+
+    partyMembersPage() {
+        this.fetchModule(import(/* webpackChunkName: "PartyMembers" */ "./screens/party/members/MembersUpdate"),
+            PartyMembers => this.setState({
+                content: <PartyMembers/>,
+            }));
+    }
+
+    newCommandPage() {
+        this.fetchModule(import(/* webpackChunkName: "NewCommand" */ "./screens/command/new/NewCommand"),
+            NewCommand => this.setState({
+                content: <NewCommand/>,
+            }));
+    }
+
+    commandDetailPage() {
+        this.fetchModule(import(/* webpackChunkName: "CommandDetail" */ "./screens/command/detail/CommandDisplay"),
+            CommandDisplay => this.setState({
+                content: <CommandDisplay/>,
+            }));
     }
 
     render() {

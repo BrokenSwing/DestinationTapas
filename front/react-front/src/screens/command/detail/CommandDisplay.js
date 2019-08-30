@@ -43,48 +43,41 @@ export default class CommandDisplay extends React.Component {
     render() {
         return (
             <>
-                <NavBar/>
-                <section className="section">
-                    <div className="container">
-                        <a className="is-link navigate"
-                           href={Aviator.hrefFor("/parties/:id/", {
-                               namedParams: {
-                                   id: Aviator.getCurrentRequest().namedParams.id
-                               }
-                           })}
-                        >
-                            <Icon iconName="arrow-left" iconClasses="is-small"/><span>Retour</span>
-                        </a>
-                        <h1 className="title">
-                            Détail de la commande
-                        </h1>
+                <a className="is-link navigate"
+                   href={Aviator.hrefFor("/parties/:id/", {
+                       namedParams: {
+                           id: Aviator.getCurrentRequest().namedParams.id
+                       }
+                   })}
+                >
+                    <Icon iconName="arrow-left" iconClasses="is-small"/><span>Retour</span>
+                </a>
+                <h1 className="title">
+                    Détail de la commande
+                </h1>
 
-                        <ProductsList>
-                            <ProductsCategory name="Choisis">
-                                {
-                                    this.state.product &&
-                                    <ProductItem
-                                        product={{...this.state.product, price: this.state.command.total_price}}
-                                        selected={true}
-                                    />
-                                }
-                            </ProductsCategory>
-                        </ProductsList>
-
-
-                        <h2 className="subtitle is-size-5">Participants</h2>
-
+                <ProductsList>
+                    <ProductsCategory name="Choisis">
                         {
-                            this.state.product && (
-                                displayShots(this.state.product) ?
-                                    <ShotsContributionsDisplay contributions={this.state.command.contributions} /> :
-                                    <BasicContributionsDisplay contributions={this.state.command.contributions}/>
-                            )
+                            this.state.product &&
+                            <ProductItem
+                                product={{...this.state.product, price: this.state.command.total_price}}
+                                selected={true}
+                            />
                         }
+                    </ProductsCategory>
+                </ProductsList>
 
-                    </div>
-                </section>
-                <Footer/>
+
+                <h2 className="subtitle is-size-5">Participants</h2>
+
+                {
+                    this.state.product && (
+                        displayShots(this.state.product) ?
+                            <ShotsContributionsDisplay contributions={this.state.command.contributions}/> :
+                            <BasicContributionsDisplay contributions={this.state.command.contributions}/>
+                    )
+                }
             </>
         );
     }
