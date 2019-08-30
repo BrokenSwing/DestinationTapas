@@ -1,7 +1,7 @@
 import React from "react";
 import NavBar from "../../../components/NavBar";
 import Footer from "../../../components/Footer";
-import {fetchProduct, fetchPartyMembers, createCommandForParty} from "../../../api/api";
+import {fetchProduct, fetchPartyMembers, createCommandForParty} from "../../../api";
 import "aviator";
 import SelectContributions from "./SelectContributions";
 import Icon from "../../../components/Icon";

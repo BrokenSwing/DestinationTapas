@@ -1,5 +1,5 @@
 import React from "react";
-import { fetchUser } from "../api/api";
+import { fetchUser } from "../api";
 import PropTypes from "prop-types";
 
 export default class UserName extends React.Component {

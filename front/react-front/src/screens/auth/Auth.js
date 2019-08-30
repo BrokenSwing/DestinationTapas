@@ -3,7 +3,7 @@ import {withCookies} from "react-cookie";
 import {FormField, FormSubmit} from "../../components/Field";
 import {Formik, Field, Form} from "formik";
 import * as Yup from "yup";
-import {fetchToken} from "../../api/api"
+import {fetchToken} from "../../api"
 import "aviator";
 
 const SignInSchema = Yup.object().shape({

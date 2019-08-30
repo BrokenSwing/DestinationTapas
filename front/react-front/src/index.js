@@ -3,11 +3,11 @@ import "./style.sass";
 import Footer from "./components/Footer";
 import NavBar from "./components/NavBar";
 import 'aviator'
-import {render, isConnected} from "./routing";
+import {render, isConnected, requiresAuth} from "./routing";
 import {Helmet} from "react-helmet";
 import ErrorBoundary from "./components/ErrorBoundary";
-import Products from "./screens/products/Products";
 import SectionWithContainer from "./components/SectionWithContainer";
+import * as api from "./api"
 
 class Navigator extends React.Component {
 
@@ -24,19 +24,26 @@ class Navigator extends React.Component {
             '/': "mainPage",
             '/auth': "authPage",
             '/products': "productsPage",
+            '/friends': "friendsPage",
         });
         Aviator.dispatch();
         Aviator.refresh();
     }
 
-    mainPage() {
-        import(/* webpackChunkName: "App" */ "./App").then(({default: App}) => {
-            this.setState({
-                content: <App/>
-            })
+    fetchModule(importStatement, cb) {
+        importStatement.then(({default: Component}) => {
+            cb(Component);
         }).catch(() => this.setState({
             content: null,
         }));
+    };
+
+    mainPage() {
+        this.fetchModule(import(/* webpackChunkName: "App" */ "./App"),
+            App => this.setState({
+                content: <App/>
+            })
+        );
     }
 
     authPage(request) {
@@ -47,24 +54,30 @@ class Navigator extends React.Component {
                 Aviator.navigate("/");
             }
         } else {
-            import(/* webpackChunkName: "Auth" */ "./screens/auth/Auth").then(({default: Auth}) => {
-                this.setState({
+            this.fetchModule(import(/* webpackChunkName: "Auth" */ "./screens/auth/Auth"),
+                Auth => this.setState({
                     content: <Auth/>
-                });
-            }).catch(() => this.setState({
-                content: null,
-            }));
+                }));
         }
     }
 
     productsPage() {
-        import(/* webpackChunkName: "Products" */ "./screens/products/Products").then(({default: Product}) => {
-            this.setState({
+        this.fetchModule(import(/* webpackChunkName: "Products" */ "./screens/products/Products"),
+            Products => this.setState({
                 content: <Products/>,
+            }))
+    }
+
+    friendsPage() {
+        this.fetchModule(import(/* webpackChunkName: "Friends" */ "./screens/friends/Friends"), Friends => {
+            requiresAuth(() => {
+                api.fetchUserFriends(api.getConnectedUser()).then(result => {
+                }).catch((err) => console.log(`Unable to connect to Internet. Error: ${err}`))
             });
-        }).catch(() => this.setState({
-            content: null,
-        }));
+            this.setState({
+                content: <Friends/>
+            });
+        });
     }
 
     render() {

@@ -3,7 +3,7 @@ import Footer from "../../../components/Footer";
 import NavBar from "../../../components/NavBar";
 import Icon from "../../../components/Icon";
 import "aviator";
-import {fetchCommand, fetchParty, finishParty} from "../../../api/api";
+import {fetchCommand, fetchParty, finishParty} from "../../../api";
 import UserName from "../../../components/UserName";
 import {Modal, ModalCardFoot, ModalCard, ModalCardBody, ModalCardHead} from "../../../components/modals";
 import ProductName from "../../../components/ProductName";

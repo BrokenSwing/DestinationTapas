@@ -2,7 +2,7 @@ import React from "react";
 import NavBar from "../../../components/NavBar";
 import Footer from "../../../components/Footer";
 import Icon from "../../../components/Icon";
-import { fetchParty, fetchUserFriends, addMemberToParty, removeMemberFromParty } from "../../../api/api";
+import { fetchParty, fetchUserFriends, addMemberToParty, removeMemberFromParty } from "../../../api";
 import "aviator";
 import { Selector, Selectable, SelectorData } from "../../../components/selector";
 import UserName from "../../../components/UserName";

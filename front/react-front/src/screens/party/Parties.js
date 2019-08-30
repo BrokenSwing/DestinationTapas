@@ -2,7 +2,7 @@ import React from "react";
 import NavBar from "../../components/NavBar";
 import Footer from "../../components/Footer";
 import Icon from "../../components/Icon";
-import { fetchAllParties, createParty } from "../../api/api";
+import { fetchAllParties, createParty } from "../../api";
 import "aviator";
 
 const compareNumbers = (a, b) => {

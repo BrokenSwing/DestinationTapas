@@ -3,7 +3,7 @@ import NavBar from "../../components/NavBar";
 import Footer from "../../components/Footer";
 import Icon from "../../components/Icon";
 import UserName from "../../components/UserName";
-import { fetchUserMisc } from "../../api/api";
+import { fetchUserMisc } from "../../api";
 import ProductName from "../../components/ProductName";
 
 export default class Profile extends React.Component {
