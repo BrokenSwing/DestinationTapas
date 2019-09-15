@@ -23,6 +23,7 @@ class Navigator extends React.Component {
             target: this,
             '/': "mainPage",
             '/auth': "authPage",
+            '/register': "registerPage",
             '/products': "productsPage",
             '/friends': "friendsPage",
             '/profile': "profilePage",
@@ -70,9 +71,24 @@ class Navigator extends React.Component {
                 Aviator.navigate("/");
             }
         } else {
-            this.fetchModule(import(/* webpackChunkName: "Auth" */ "./screens/auth/Auth"),
+            this.fetchModule(import(/* webpackChunkName: "LogIn" */ "./screens/auth/LogIn"),
                 Auth => this.setState({
                     content: <Auth/>
+                }));
+        }
+    }
+
+    registerPage(request) {
+        if (isConnected()) {
+            if (request.queryParams.redirect) {
+                Aviator.navigate(request.queryParams.redirect)
+            } else {
+                Aviator.navigate("/");
+            }
+        } else {
+            this.fetchModule(import(/* webpackChunkName: "Register" */ "./screens/auth/Register"),
+                Register => this.setState({
+                    content: <Register/>
                 }));
         }
     }
